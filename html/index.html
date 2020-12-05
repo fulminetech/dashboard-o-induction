@@ -19,7 +19,10 @@
     <script src="/charts/Chart.bundle.min.js"></script>
     <script src="/charts/plugin/chartjs-plugin-zoom.min.js"></script>
     <script src="/plugin/hammer.min.js"></script>
-    <link href="/css/tailwind.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/Mikhus/canvas-gauges/master/gauge.min.js"></script>
+    <link  href="/css/tailwind.min.css" rel="stylesheet">
 
     <!-- BackGround Info -->
     <style>
@@ -73,72 +76,31 @@
         }
     </style>
 
-    <!-- Modal CSS -->
-    <style>
-        .modal {
-            transition: opacity 0.25s ease;
-        }
-
-        body.modal-active {
-            overflow-x: hidden;
-            overflow-y: visible !important;
-        }
-    </style>
-
 </head>
 <!-- BODY -->
 
-<body class="bg-black-alt font-sans leading-normal tracking-normal">
+<body class="bg-gray-300 font-sans leading-normal tracking-normal" onload="startfetching()">
 
     <!-- NAVIGATION BAR -->
-    <nav id="header" class="bg-gray-900 fixed w-full z-10 bottom-0 shadow">
+    <nav id="header" class="bg-transparent fixed w-full z-10 bottom-0 shadow">
         <div class="w-full  mx-auto flex flex-wrap items-center mt-0 pt-0 pb-3 md:pb-0">
-            <div class="w-full select-none px-5 flex-grow lg:flex lg:items-center lg:w-auto hidden lg:block mt-2 lg:mt-0 bg-gray-900 md:text-center z-20" id="nav-content">
+            <div class="w-full select-none px-5 flex-grow lg:flex lg:items-center lg:w-auto hidden lg:block mt-2 lg:mt-0 bg-purple-300 md:text-center z-20" id="nav-content">
 
                 <!-- HTML Pages -->
                 <ul class="list-reset uppercase text-md lg:flex flex-1 items-center px-4 md:px-0">
                     <!-- Dashboard -->
                     <li class="mr-6 my-2 md:my-0">
-                        <a href="/dashboard" class="block py-1 md:py-3 pl-1 align-middle text-gray-100 no-underline hover:text-gray-100 border-b-2 border-gray-900  hover:border-blue-400">
+                        <a href="/dashboard" class="block py-1 md:py-3 pl-1 align-middle text-gray-800 no-underline hover:text-gray-100 border-b-2 border-gray-400  hover:border-blue-400">
                             <i class="fas fa-digital-tachograph fa-fw mr-3"></i>
                             <span class="pb-3 md:pb-0"> Dashboard </span>
                         </a>
                     </li>
-
-                    <!-- Reports -->
-                    <li class="mr-6 my-2 md:my-0">
-                        <a href="/reports" class="block py-1 md:py-3 pl-1 align-middle text-gray-600 no-underline hover:text-gray-100 border-b-2 border-gray-900  hover:border-pink-400">
-                            <i class="fas fa-cogs fa-fw mr-3"></i>
-                            <span class="pb-3 md:pb-0"> Reports </span>
-                        </a>
-                    </li>
-
-                    <!-- Control Panel -->
-                    <!-- <li class="mr-6 my-2 md:my-0">
-                        <a href="/control"
-                            class="block py-1 md:py-3 pl-1 align-middle text-gray-600 no-underline hover:text-gray-100 border-b-2 border-gray-900  hover:border-green-400">
-                            <i class="fas fa-chart-area fa-fw mr-3"></i>
-                            <span class="pb-1 md:pb-0">
-                                Control
-                            </span>
-                        </a>
-                    </li> -->
-
                 </ul>
-
-                <!-- Search bar -->
-                <div class="relative pull-right pl-4 pr-4 md:pr-0">
-                    <input type="search" placeholder="Search" class="w-full bg-gray-900 text-sm text-gray-400 transition border border-gray-800 focus:outline-none focus:border-gray-600 rounded py-1 px-2 pl-10 appearance-none leading-normal"> <div class="absolute search-icon" style="top: 0.375rem;left: 1.75rem;">
-                        <svg class="fill-current pointer-events-none text-gray-500 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"> 
-                            <path d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"> </path>
-                        </svg>
-                    </div>
-                </div>
 
                 <!-- Time  -->
                 <div class="flex relative pl-4 inline-block float-right select-none">
-                    <div id="time" class="align-middle text-l text-gray-400">Loading..</div>
-                    <i class="align-middle cursor-pointer text-xl pt-1 text-gray-400 pl-3 px-2 fas fa-sign-out-alt" onclick="logout()"></i>
+                    <div id="time" class="align-middle text-l text-gray-900">Loading..</div>
+                    <i class="align-middle cursor-pointer text-xl pt-1 text-gray-900 pl-3 px-2 fas fa-sign-out-alt" onclick="logout()"></i>
                 </div>
 
             </div>
@@ -146,58 +108,35 @@
 
     <!--Container-->
     <div class="w-full pb-10">
-        <div class="w-full md:flex xl:flex px-0 md:px-0 md:mt-2 mb-2 text-gray-800 leading-normal" style="height:90vh;">
+        <div class="w-full md:flex xl:flex px-0 md:px-0 md:mt-2 mb-2 text-gray-800 leading-normal" style="height:80vh;">
 
             <!-- Metric Cards -->
-            <div class="flex-wrap select-none md:w-1/5 xl:w-1/5">
+            <!-- <div class="flex-wrap select-none md:w-1/5 xl:w-1/5"> -->
 
                 <!-- Production Status Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                <!-- <div class="w-full p-3">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                         <div class="flex flex-row items-center">
                             <div class="flex-shrink px-4">
                                 <div id="colorr" class="rounded p-3 text-red-800"><i
                                         class="fas fa-cog fa-pulse fa-2x fa-fw fa-inverse"></i></div>
                             </div>
                             <div class="flex-1 pt-3 text-right md:text-center pr-3">
-                                <h5 class="font-bold uppercase text-gray-400">Production Status</h5>
-                                <h3 id="status" class="font-bold text-5xl pb-3 text-gray-400">
+                                <h5 class="font-bold uppercase text-gray-900">MACHINE</h5>
+                                <h3 id="machine_status" class="font-bold text-4xl pb-3 text-gray-900">
                                 </h3>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
-                <!-- Operator Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i
-                                        class="fas fa-user-shield fa-1x fa-fw fa-inverse"></i>
-                                </div>
-                            </div>
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400"> Operator</h5>
-                                <h3 id="operator_name_metric" class="font-bold text-2xl text-gray-500">
-                                </h3>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Product Name Metric Card-->
+                <!-- Machine Uptime Metric Card-->
                 <!-- <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                         <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i class="fas fa-atom fa-x fa-fw fa-inverse"></i>
-                                </div>
-                            </div>
-                            <div class="flex-1 pt-3 text-right pr-3">
-                                <h5 class="font-bold uppercase text-gray-400"> Product:
-                                    <a id="name_metric" class="font-bold text-2xl text-gray-500">
+                            <div class="flex-1 pt-3 text-center pr-3">
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Start time:<br>
+                                    <a id="start_time" class="font-bold text-2xl text-gray-500">
                                     </a>
                                 </h5>
                             </div>
@@ -205,150 +144,330 @@
                     </div>
                 </div> -->
 
-                <!-- Recipie ID Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700">
-                                    <i class="fa fa-dna fa-1x fa-fw fa-inverse"></i>
-                                </div>
-                            </div>
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400"> Recipie ID</h5>
-                                <h3 id="recipie_id_metric" class="font-bold text-2xl text-gray-500">
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Batch Number Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i
-                                        class="fas fa-list-ol fa-1x fa-fw fa-inverse"></i></div>
-                            </div>
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400"> Batch ID</h5>
-                                <h3 id="batch_number_metric" class="font-bold text-2xl text-gray-500">
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Machine Uptime Metric Card-->
+                <!-- Ellapsed time Metric Card-->
                 <!-- <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                         <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i
-                                        class="fas fa-rocket fa-1x fa-fw fa-inverse"></i>
-                                </div>
-                            </div>
-                            <div class="flex-1 pt-3 text-right pr-3">
-                                <h5 class="font-bold uppercase text-gray-400">Machine Uptime:<br>
-                                    <a id="uptime_metric" class="font-bold text-2xl text-gray-500">
-                                    </a> hours
+                            <div class="flex-1 pt-3 text-center pr-3">
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Ellapsed time:<br>
+                                    <a id="ellapsed_time" class="font-bold text-2xl text-gray-500">
+                                    </a>
                                 </h5>
                             </div>
                         </div>
                     </div>
                 </div> -->
 
-                <!-- Rotation Number Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i class="fas fa-cog fa-1x fa-fw fa-inverse"></i>
-                                </div>
-                            </div>
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400">Rotation Number</h5>
-                                <h3 id="rotation1_number_metric" class="font-bold text-2xl text-gray-500">
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!--Production Count Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                <!-- <div class="w-full p-3">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                         <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i
-                                        class="fas fa-tachometer-alt fa-1x fa-fw fa-inverse"></i></div>
-                            </div>
                             <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400">Production count</h5>
-                                <h3 id="count_metric" class="font-bold text-2xl text-gray-500">
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Production count:</h5>
+                                <h3 id="production_count" class="font-bold text-2xl text-gray-500">
                                 </h3>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
+
+                <!--Delay Time Metric Card-->
+                <!-- <div class="w-full p-3">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                        <div class="flex flex-row items-center">
+                            <div class="flex-1 pt-3 text-center pr-3">
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Delay Time:</h5>
+                                <h3 id="delay_time" class="font-bold text-2xl text-gray-500">0
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!--Rejection Count Metric Card-->
+                <!-- <div class="w-full p-3">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                        <div class="flex flex-row items-center">
+                            <div class="flex-1 pt-3 text-center pr-3">
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Rejection count:</h5>
+                                <h3 id="count_metric" class="font-bold text-2xl text-gray-500">0
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
 
                 <!--Production Per Hour Count Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                <!-- <div class="w-full p-3">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                         <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700"><i
-                                        class="fas fa-tachometer-alt fa-1x fa-fw fa-inverse"></i></div>
-                            </div>
                             <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400">Production Per Hour</h5>
-                                <h3 id="production_per_hour_metric" class="font-bold text-2xl text-gray-500">
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Production Per Hour:</h5>
+                                <h3 id="production_per_hour" class="font-bold text-2xl text-gray-500">
                                 </h3>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- RPM Metric Card-->
-                <div class="w-full p-3">
-                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                <!-- <div class="w-full p-3">
+                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                         <div class="flex flex-row items-center">
-                            <div class="flex-shrink px-4">
-                                <div class="rounded p-3 bg-blue-700">
-                                    <i class="fas fa-dharmachakra fa-1x fa-fw fa-inverse"></i>
-                                </div>
-                            </div>
                             <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-400">Turret RPM</h5>
-                                <h3 id="rpm_metric" class="font-bold text-2xl text-gray-500">
-                                </h3>
+                                <h5 class="font-bold text-xl uppercase text-gray-900">Turret RPM: <a id="rpm_metric"> 100</a></h5>
                             </div>
                         </div>
+                        <div id="chart_div" class="w-full p-5 pl-10 "></div>
                     </div>
-                </div>
+                </div> -->
 
                 <!--Divider-->
-                <hr class="border-b-2 border-gray-600 my-4 mx-4">
-            </div>
+                <!-- <hr class="border-b-2 border-gray-600 my-4 mx-4">
+            </div> -->
 
             <!-- Graphs and Tables -->
-            <div class="flex select-none flex-wrap md:w-4/5 xl:w-4/5">
+            <!-- <div class="flex select-none flex-wrap md:w-4/5 xl:w-4/5"> -->
+            <div class="flex select-none flex-wrap">
 
                 <!-- Carousel HTML -->
                 <div class="carousel w-full p-3">
-                    <!-- Realtime Slide - 1 -->
+
+                    <!-- Overview Slide - 1 -->
                     <div class="carousel-inner relative overflow-hidden w-full">
-                        <!--Main slide-->
                         <input class="carousel-open" type="radio" id="carousel-1" name="carousel" aria-hidden="true"
                             hidden="" checked="checked">
-                        <div class="carousel-item absolute opacity-0 border overflow-y-auto border-gray-800 rounded shadow"
+                        <div class="carousel-item absolute bg-gray-100 border overflow-y-auto border-gray-800 rounded shadow"
+                            style="height:90vh;">
+                            <div class="flex flex-wrap w-full text-center">
+
+                                <!-- Machine Toggle Card-->
+                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="flex flex-wrap flex-row items-center">
+                                            <div class="flex-shrink p-2">
+                                                <div class="rounded p-3 bg-blue-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 pr-2">
+                                                <h5 class="font-bold text-right uppercase text-4xl text-gray-900"> machine
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 text-right py-3 pr-3">
+                                            <h5 class="font-bold uppercase text-2xl pb-5 text-gray-900"> Status:
+                                                <a id="machine_status_metric" class="font-bold text-2xl pl-2 items-center text-gray-800">OFF
+                                                </a>
+                                            </h5>
+                                            <h4 class="py-3">
+                                                <button id="searchbatch"
+                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10  border border-blue-500 hover:border-transparent rounded"
+                                                    onclick="setReady()">
+                                                    READY
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="setStart()">
+                                                    START
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="setStop()">
+                                                    STOP
+                                                </button>
+                                            </h4>
+                                
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Delay Time Card-->
+                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="flex items-center">
+                                            <div class="p-2">
+                                                <div class="rounded p-3 bg-blue-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 p-2">
+                                                <h5 class="font-bold text-right text-4xl text-gray-900">Heating Time: 
+                                                    <a id="heating_time_metric" class="font-bold text-4xl pl-2 items-center text-gray-800"> 10 
+                                                    </a> sec
+                                                </h5>
+                                            </div>
+                                        </div>
+                                
+                                        <div class=" text-right pb-2 pr-3">
+                                            <h4 class="py-2">
+                                                <button 
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="decrement()">
+                                                    -
+                                                </button>
+                                                <button 
+                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="increment()">
+                                                    +
+                                                </button>
+                                            </h4>
+                                            <h4 class="py-3">
+                                                <button 
+                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10  border border-blue-500 hover:border-transparent rounded"
+                                                    onclick="setDelay1()">
+                                                    10 sec
+                                                </button>
+                                                <button 
+                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-blue-500 hover:border-transparent rounded"
+                                                    onclick="setDelay2()">
+                                                    20 sec
+                                                </button>
+                                                <button
+                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-blue-500 hover:border-transparent rounded"
+                                                    onclick="setDelay3()">
+                                                    30 sec
+                                                </button>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status Table-->
+                                <div class="w-1/2 flex-shrink flex-wrap flex-row p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2" height="300rem">
+                                        <div class="border-b border-gray-800 p-2">
+                                            <h5 class="font-bold uppercase text-center text-xl text-gray-900">Production: 
+                                                <a id="production_metric" class="font-bold text-2xl pl-2 items-center text-gray-800">0
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="px-5 pb-3">
+                                            <table class="table-fixed w-full text-center text-gray-800" >
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center text-xl uppercase py-2">Station Number</th>
+                                                        <th class="text-center text-xl uppercase py-2">Status</th>
+                                                    </tr>
+                                                </thead>
+                                        
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-1
+                                                        </td>
+                                                        <td id="j1-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-2
+                                                        </td>
+                                                        <td id="j2-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-3
+                                                        </td>
+                                                        <td id="j3-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-4
+                                                        </td>
+                                                        <td id="j4-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-5
+                                                        </td>
+                                                        <td id="j5-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-6
+                                                        </td>
+                                                        <td id="j6-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-7
+                                                        </td>
+                                                        <td id="j7-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="border border-gray-500 text-2xl px-4 py-1">J-8
+                                                        </td>
+                                                        <td id="j8-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">Heating</td>
+                                                    </tr>
+                                                    
+                                        
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Turret Guage-->
+                                <div class="w-1/2 flex-shrink flex-wrap flex-row p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="border-b border-gray-800 p-3">
+                                            <h5 class="font-bold uppercase text-center text-gray-900">Turret Position</h5>
+                                        </div>
+                                        <div class="gauge w-5/3 py-5 align-middle text-center">
+                                            <canvas height="330rem" width="500rem" id="canvas-id"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <label for="carousel-2" class="next control-1 w-10 h-10 mb-5 md:mr-5 absolute cursor-pointer hidden text-3xl font-bold opacity-50 text-black rounded-full bg-gray-600 hover:opacity-100 leading-tight text-center z-10 inset-y-0 right-0 my-auto">›</label>
+                    </div>
+
+                    <!-- Temperature Trend Slide - 2 -->
+                    <div class="carousel-inner relative overflow-hidden w-full">
+                        <input class="carousel-open" type="radio" id="carousel-2" name="carousel" aria-hidden="true" hidden="">
+                        <div class="carousel-item absolute bg-gray-100 border overflow-y-auto border-gray-800 rounded shadow" style="height:92vh;">
+                            <div class="flex flex-wrap w-full text-center">
+
+
+                                <!-- Temprature Variation Graph-->
+                                <div class="w-full p-3 pt-5">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="border-b border-gray-800 p-3">
+                                             <h5 class="font-bold uppercase text-center text-gray-900">Thermal Profile</h5>
+                                        </div>
+                                        <div class="p-5"> 
+                                            <canvas id="temperature_graph" class="chartjs" height="90rem"></canvas> 
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Temperature Guage-->
+                                <div class="flex-shrink flex-wrap flex-row p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="border-b border-gray-800 p-3">
+                                            <h5 class="font-bold uppercase text-center text-gray-900">Temperature Guage</h5>
+                                        </div>
+                                        <div class="gauge pl-8 py-3 align-middle text-center">
+                                            <canvas height="1000rem" width="180rem" id="canvas2-id"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <label for="carousel-1"
+                            class="prev control-2 w-10 h-10 mb-5 md:ml-5 absolute cursor-pointer hidden text-3xl font-bold opacity-50 text-black rounded-full bg-gray-600 hover:opacity-100 leading-tight text-center z-10 inset-y-0 left-0 my-auto">‹</label>
+                        <label for="carousel-3"
+                            class="next control-2 w-10 h-10 mb-5 md:mr-5 absolute cursor-pointer hidden text-3xl font-bold opacity-50 text-black rounded-full bg-gray-600 hover:opacity-100 leading-tight text-center z-10 inset-y-0 right-0 my-auto">›</label>
+
+                    </div>
+
+                    <!-- Control Slide - 3 -->
+                    <div class="carousel-inner relative overflow-hidden w-full">
+                        <input class="carousel-open" type="radio" id="carousel-3" name="carousel" aria-hidden="true" hidden="">
+                        <div class="carousel-item absolute bg-gray-100 border overflow-y-auto border-gray-800 rounded shadow"
                             style="height:92vh;">
                             <div class="flex flex-wrap w-full text-center">
 
-                                <!-- Realtime Banner -->
+                                
+
+                                <!-- Trip Status Banner -->
                                 <div class="w-full p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-row items-center">
                                             <div class="flex-shrink px-4">
                                                 <div class="rounded p-3 bg-indigo-600"><i
@@ -356,641 +475,80 @@
                                                 </div>
                                             </div>
                                             <div class="flex-1 text-right md:text-center">
-                                                <h3 class="font-bold uppercase text-3xl p-3 text-gray-400">
-                                                    Realtime data
+                                                <h3 class="font-bold uppercase text-3xl p-3 text-gray-900">
+                                                    STATUS
                                                 </h3>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Rotation Number Metric Card-->
+                                
+                                <!-- Main Motor Trip Metric Card-->
                                 <div class="w-full md:w-1/2 xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-row items-center">
-                                            <div class="flex-shrink px-4">
-                                                <div class="rounded p-3 bg-purple-700"><i
-                                                        class="fas fa-cog fa-1x fa-fw fa-inverse"></i>
-                                                </div>
+                                            <div class="flex-1 text-right md:text-center pr-3">
+                                                <h5 class="font-bold uppercase text-3xl text-gray-900">MAIN MOTOR</h5>
                                             </div>
-                                            <div class="flex-1 pt-3 text-3xl text-center pr-3">
-                                                <h5 class="font-bold uppercase text-gray-400">Rotation Number:
-                                                    <a id="rotation_number_metric"
-                                                        class="font-bold text-4xl text-gray-500">
-                                                    </a>
-                                                </h5>
+                                            <div class="flex-shrink p-3">
+                                                <div class="rounded p-6 bg-red-600"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Punch Number Metric Card-->
+                                
+                                <!-- Feeder Motor Trip Metric Card-->
                                 <div class="w-full md:w-1/2 xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-row items-center">
-                                            <div class="flex-shrink px-4">
-                                                <div class="rounded p-3 bg-purple-700"><i
-                                                        class="fas fa-cog fa-1x fa-fw fa-inverse"></i>
-                                                </div>
+                                            <div class="flex-1 text-right md:text-center pr-3">
+                                                <h5 class="font-bold uppercase text-3xl text-gray-900">Feeder MOTOR</h5>
                                             </div>
-                                            <div class="flex-1 pt-3 text-3xl text-center pr-3">
-                                                <h5 class="font-bold uppercase text-gray-400">PRESENT Punch Number:
-                                                    <a id="punch_number_metric"
-                                                        class="font-bold text-4xl text-gray-500">
-                                                    </a>
-                                                </h5>
+                                            <div class="flex-shrink p-3">
+                                                <div class="rounded p-6 bg-red-600"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Pre Compression Limit Metric Card-->
-                                <div class="w-full md:w-1/2 xl:w-1/3 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                                
+                                <!-- Emergency Metric Card-->
+                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-row items-center">
-                                            <div class="flex-shrink px-4">
-                                                <div class="rounded p-3 bg-purple-700"><i
-                                                        class="fas fa-angle-down fa-1x fa-fw fa-inverse"></i>
-                                                </div>
+                                            <div class="flex-1 text-right md:text-center pr-3">
+                                                <h5 class="font-bold uppercase text-3xl text-gray-900">Emergency</h5>
                                             </div>
-                                            <div class="flex-1 pt-3 text-right pr-3">
-                                                <h5 class="font-bold text-2xl uppercase text-gray-400">Pre Comp.
-                                                    Upper Tolerance:
-                                                    <a id="precompression_upperlimit_metric"
-                                                        class="font-bold text-2xl text-gray-500">
-                                                    </a>
-                                                </h5>
-                                                <h5 class="font-bold text-2xl uppercase text-gray-400">Pre Comp.
-                                                    Lower Tolerance:
-                                                    <a id="precompression_lowerlimit_metric"
-                                                        class="font-bold text-2xl text-gray-500">
-                                                    </a>
-                                                </h5>
+                                            <div class="flex-shrink p-3">
+                                                <div class="rounded p-6 bg-red-600"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Main Compression limit Metric Card-->
-                                <div class="w-full md:w-1/2 xl:w-1/3 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                                
+                                <!-- Safety Guard Metric Card-->
+                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-row items-center">
-                                            <div class="flex-shrink px-4">
-                                                <div class="rounded p-3 bg-purple-700"><i
-                                                        class="fas fa-angle-double-down fa-1x fa-fw fa-inverse"></i>
-                                                </div>
+                                            <div class="flex-1 text-right md:text-center pr-3">
+                                                <h5 class="font-bold uppercase text-3xl text-gray-900">Safety Guard Open</h5>
                                             </div>
-                                            <div class="flex-1 pt-3 text-right pr-3">
-                                                <h5 class="font-bold text-2xl uppercase text-gray-400">Main Comp.
-                                                    Upper Tolerance:
-                                                    <a id="maincompression_upperlimit_metric"
-                                                        class="font-bold text-2xl text-gray-500">
-                                                    </a>
-                                                </h5>
-                                                <h5 class="font-bold text-2xl uppercase text-gray-400">Main Comp.
-                                                    Lower Tolerance:
-                                                    <a id="maincompression_lowerlimit_metric"
-                                                        class="font-bold text-2xl text-gray-500">
-                                                    </a>
-                                                </h5>
+                                            <div class="flex-shrink p-3">
+                                                <div class="rounded p-6 bg-red-600"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Ejection limit Metric Card-->
-                                <div class="w-full md:w-1/2 xl:w-1/3 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow p-2">
+                                
+                                <!-- System Overload Metric Card-->
+                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-row items-center">
-                                            <div class="flex-shrink px-4">
-                                                <div class="rounded p-3 bg-purple-700"><i
-                                                        class="fas fa-arrow-alt-circle-up fa-1x fa-fw fa-inverse"></i>
-                                                </div>
+                                            <div class="flex-1 text-right md:text-center pr-3">
+                                                <h5 class="font-bold uppercase text-3xl text-gray-900">System Overload</h5>
                                             </div>
-                                            <div class="flex-1 pt-3 text-right pr-3">
-                                                <h5 class="font-bold text-2xl uppercase text-gray-400">Ejection Upper
-                                                    Tolerance:
-                                                    <a id="ejection_limit_metric"
-                                                        class="font-bold text-3xl text-gray-500">
-                                                    </a>
-                                                </h5>
+                                            <div class="flex-shrink p-3">
+                                                <div class="rounded p-6 bg-red-600"></div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--Compression Data table -->
-                                <div class="w-full xl:w-1/3 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">Compression
-                                                Data Table</h5>
-                                        </div>
-                                        <div class="px-5 pb-5">
-                                            <table class="table-fixed w-full text-center text-gray-400" height="170rem">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center py-3">Punch Number</th>
-                                                        <th class="text-center py-3">PRE <br> (kN)</th>
-                                                        <th class="text-center py-3">MAIN <br> (kN)</th>
-                                                        <th class="text-center py-3">EJECTION <br> (kN)</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">1B
-                                                            <div id="p1-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p1-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p1-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p1-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">1D
-                                                            <div id="p2-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p2-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p2-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p2-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">2B
-                                                            <div id="p3-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p3-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p3-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p3-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">2D
-                                                            <div id="p4-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p4-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p4-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p4-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">3B
-                                                            <div id="p5-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p5-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p5-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p5-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">3D
-                                                            <div id="p6-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p6-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p6-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p6-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">4B
-                                                            <div id="p7-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p7-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p7-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p7-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">4D
-                                                            <div id="p8-status" class="rounded p-1 bg-green-600"></div>
-                                                        </td>
-                                                        <td id="p8-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p8-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p8-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 font-bold px-4 py-2">Avg
-                                                        <td id="avg-pre" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="avg-main" class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="avg-ejn" class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--Compression Graph-->
-                                <div class="w-full xl:w-2/3 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">Compression
-                                                Graph</h5>
-                                        </div>
-                                        <div class="p-5">
-                                            <canvas id="compression_graph" class="chartjs" height="170rem"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <label for="carousel-2" class="next control-1 w-10 h-10 mb-5 md:mr-5 absolute cursor-pointer hidden text-3xl font-bold opacity-25 text-black rounded-full bg-white hover:opacity-100 leading-tight text-center z-10 inset-y-0 right-0 my-auto">›</label>
-                    </div>
-
-                    <!-- Realtime Slide - 2 -->
-                    <div class="carousel-inner relative overflow-hidden w-full">
-                        <!--Main slide-->
-                        <input class="carousel-open" type="radio" id="carousel-2" name="carousel" aria-hidden="true" hidden="">
-                        <div class="carousel-item absolute opacity-0 border overflow-y-auto border-gray-800 rounded shadow" style="height:92vh;">
-                            <div class="flex flex-wrap w-full text-center">
-
-                                <!--Pre Compression Graph-->
-                                <div class="w-full xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                             <h5 class="font-bold uppercase text-center text-gray-400">Pre Compression</h5>
-                                        </div>
-                                        <div class="p-5"> 
-                                            <canvas id="precompression_graph" class="chartjs" height="170rem"></canvas> 
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--Main Compression Graph-->
-                                <div class="w-full xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">Main Compression </h5>
-                                        </div>
-                                        <div class="p-5">
-                                            <canvas id="maincompression_graph" class="chartjs" height="170rem"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--Ejn Compression Graph-->
-                                <div class="w-full xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">Ejection
-                                                Compression
-                                            </h5>
-                                        </div>
-                                        <div class="p-5">
-                                            <canvas id="ejncompression_graph" class="chartjs" height="170rem"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--Avg Compression Graph-->
-                                <div class="w-full xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b flex-1 flex-row items-center border-gray-800 p-3">
-
-                                            <h5 class="font-bold uppercase text-center text-gray-400">Average
-                                                Compression History
-                                                <!-- Search Button -->
-                                                <button
-                                                    class="modal-open bg-blue-100 uppercase ml-5 text-sm hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-1 px-2 border border-purple-500 hover:border-transparent rounded"
-                                                    onclick="searchhistory()">
-                                                    HISTORY
-                                                </button>
-                                            </h5>
-
-                                            <div class="p-5">
-                                                <canvas id="avgcompression_graph" class="chartjs"
-                                                    height="170rem"></canvas>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!--Modal-->
-                        <div
-                            class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center">
-                            <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-
-                            <div class="modal-container bg-white w-4/5 mx-auto rounded shadow-lg z-50 overflow-y-auto">
-
-                                <!-- Add margin if you want to see some of the overlay behind the modal-->
-                                <div class="modal-content py-4 text-left px-6">
-                                    <!--Title-->
-                                    <div class="flex justify-between items-center pb-3">
-                                        <p id="avg_history" class="text-2xl font-bold">Average Compression History [
-                                            PAST 500 DATA POINTS ] (Loading time upto 10 seconds) </p>
-                                        <div class="modal-close cursor-pointer z-50">
-                                            <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg"
-                                                width="18" height="18" viewBox="0 0 18 18">
-                                                <path
-                                                    d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-5">
-                                        <canvas id="avg_his_compression_graph" height="170rem"></canvas>
-                                    </div>
-
-                                    <!--Footer-->
-                                    <div class="flex justify-end pt-2">
-                                        <button
-                                            class="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">Close</button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <label for="carousel-1"
-                            class="prev control-2 w-10 h-10 mb-5 md:ml-5 absolute cursor-pointer hidden text-3xl font-bold opacity-25 text-black rounded-full bg-white hover:opacity-100 leading-tight text-center z-10 inset-y-0 left-0 my-auto">‹</label>
-                        <label for="carousel-3"
-                            class="next control-2 w-10 h-10 mb-5 md:mr-5 absolute cursor-pointer hidden text-3xl font-bold opacity-25 text-black rounded-full bg-white hover:opacity-100 leading-tight text-center z-10 inset-y-0 right-0 my-auto">›</label>
-
-                    </div>
-
-                    <!-- Search Slide-->
-                    <div class="carousel-inner relative overflow-hidden w-full">
-                        <input class="carousel-open" type="radio" id="carousel-3" name="carousel" aria-hidden="true"
-                            hidden="">
-                        <div class="carousel-item absolute opacity-0 border overflow-y-auto border-gray-800 rounded shadow"
-                            style="height:92vh;">
-                            <div class="flex flex-wrap w-full text-center">
-
-                                <!-- Search Banner -->
-                                <div class="w-full p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="flex flex-row items-center">
-                                            <div class="flex-1 text-right pl-3 md:text-center">
-                                                <h3 class="font-bold uppercase text-3xl p-3 text-gray-400">
-                                                    Search Rotation Number
-                                                </h3>
-                                            </div>
-                                            <form id="searchRotationNumber" class="px-6">
-                                                <input
-                                                    class="bg-blue-100 focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 block w-40"
-                                                    type="number" placeholder="00000">
-                                            </form>
-                                            <!-- Search Button -->
-                                            <div class="px-2">
-                                                <button
-                                                    class="bg-blue-100 uppercase text-sm hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-2 px-2 border border-blue-500 hover:border-transparent rounded"
-                                                    onclick="search()">
-                                                    Search
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--Search Compression Data table -->
-                                <div class="w-full p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">PUNCH DATA</h5>
-                                        </div>
-                                        <div class="px-5 pb-5">
-                                            <table class="table-auto w-full text-center text-gray-400" height="170rem">
-                                                <thead>
-                                                    <tr class="w-30">
-                                                        <th class="text-center py-3">Punch Number</th>
-                                                        <th class="text-center py-3">1B</th>
-                                                        <th class="text-center py-3">1D</th>
-                                                        <th class="text-center py-3">2B</th>
-                                                        <th class="text-center py-3">2D</th>
-                                                        <th class="text-center py-3">3B</th>
-                                                        <th class="text-center py-3">3D</th>
-                                                        <th class="text-center py-3">4B</th>
-                                                        <th class="text-center py-3">4D</th>
-                                                        <th class="text-center py-3">Avg</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">Pre Compression(kN)
-                                                        </td>
-                                                        <td id="p1-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p2-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p3-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p4-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p5-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p6-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p7-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p8-pre-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="avg-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">Main Compression
-                                                            (kN)</td>
-                                                        <td id="p1-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p2-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p3-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p4-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p5-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p6-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p7-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="p8-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="avg-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">Ejection (kN)</td>
-                                                        <td id="p1-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p2-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p3-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p4-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p5-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p6-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p7-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="p8-ejn-search" class="border border-gray-700 px-4 py-2">
-                                                        </td>
-                                                        <td id="avg-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Rotationwise Average table -->
-                                <div class="w-full p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">AVERAGE DATA</h5>
-                                        </div>
-                                        <div class="px-5 pb-5">
-                                            <table class="table-auto w-full text-center text-gray-400" height="170rem">
-                                                <thead>
-                                                    <tr class="w-30">
-                                                        <th class="text-center py-3">Rotation Number</th>
-                                                        <th id="rtn-1" class="text-center py-3"></th>
-                                                        <th id="rtn-2" class="text-center py-3"></th>
-                                                        <th id="rtn-3" class="text-center py-3"></th>
-                                                        <th id="rtn-4" class="text-center py-3"></th>
-                                                        <th id="rtn-5" class="text-center py-3"></th>
-                                                        <th id="rtn-6" class="text-center py-3"></th>
-                                                        <th id="rtn-7" class="text-center py-3"></th>
-                                                        <th id="rtn-8" class="text-center py-3"></th>
-                                                        <th id="rtn-9" class="text-center py-3"></th>
-                                                        <th id="rtn-10" class="text-center py-3"></th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">Pre Compression
-                                                            Average (kN)
-                                                        </td>
-                                                        <td id="rtn1-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn2-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn3-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn4-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn5-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn6-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn7-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn8-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn9-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn10-pre-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">Main Compression
-                                                            Average
-                                                            (kN)</td>
-                                                        <td id="rtn1-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn2-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn3-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn4-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn5-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn6-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn7-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn8-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn9-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn10-main-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="border border-gray-700 px-4 py-2">Ejection Average
-                                                            (kN)</td>
-                                                        <td id="rtn1-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn2-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn3-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn4-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn5-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn6-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn7-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn8-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn9-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                        <td id="rtn10-ejn-search"
-                                                            class="border border-gray-700 px-4 py-2"></td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Search Compression Graph-->
-                                <div class="w-full xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">PUNCH DATA GRAPH
-                                            </h5>
-                                        </div>
-                                        <div class="p-5">
-                                            <canvas id="compression_search_graph" class="chartjs"
-                                                height="170rem"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Average Compression Graph-->
-                                <div class="w-full xl:w-1/2 p-3">
-                                    <div class="bg-gray-900 border border-gray-800 rounded shadow">
-                                        <div class="border-b border-gray-800 p-3">
-                                            <h5 class="font-bold uppercase text-center text-gray-400">Average DATA GRAPH
-                                            </h5>
-                                        </div>
-                                        <div class="p-5">
-                                            <canvas id="compression_avg_graph" class="chartjs" height="170rem"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -998,7 +556,7 @@
                             </div>
                         </div>
                         <label for="carousel-2"
-                            class="prev control-3 w-10 h-10 mb-5 md:ml-5 absolute cursor-pointer hidden text-3xl font-bold opacity-25 text-black rounded-full bg-white hover:opacity-100 leading-tight text-center z-10 inset-y-0 left-0 my-auto">‹</label>
+                            class="prev control-3 w-10 h-10 mb-5 md:ml-5 absolute cursor-pointer hidden text-3xl font-bold opacity-50 text-black rounded-full bg-gray-600 hover:opacity-100 leading-tight text-center z-10 inset-y-0 left-0 my-auto">‹</label>
                     </div>
 
                 </div>
@@ -1006,57 +564,203 @@
         </div>
     </div>
 
-    <!-- modal script -->
+    <!-- Turret Guage -->
     <script>
-        var openmodal = document.querySelectorAll('.modal-open')
-        for (var i = 0; i < openmodal.length; i++) {
-            openmodal[i].addEventListener('click', function (event) {
-                event.preventDefault()
-                toggleModal()
-            })
-        }
+        var gauge = new RadialGauge({
+                renderTo: 'canvas-id',
+                minValue: 0,
+                maxValue: 360,
+                majorTicks: [
+                    "J-8",
+                    "J-7",
+                    "J-6",
+                    "J-5",
+                    "J-4",
+                    "J-3",
+                    "J-2",
+                    "J-1",
+                    ""
+                ],
+                minorTicks: 22,
+                ticksAngle: 360,
+                startAngle: 0,
+                strokeTicks: false,
+                // highlights: true,
+                highlights: [
+                { 
+                    from: -20, 
+                    to: 20, 
+                    color: 'lightblue' },
+                { 
+                    from: 70, 
+                    to: 110, 
+                    color: 'green' },
+                { 
+                    from: 160, 
+                    to: 200, 
+                    color: 'rgba(255,30,0,.25)' },
+                { 
+                    from: 250, 
+                    to: 290, 
+                    color: 'red'}
+                ],
+                colorPlate: "#222",
+                colorMajorTicks: "#f5f5f5",
+                colorMinorTicks: "#ddd",
+                colorNumbers: "#ccc",
+                colorNeedle: "rgba(240, 128, 128, 1)",
+                colorNeedleEnd: "rgba(255, 160, 122, .9)",
+                valueBox: false,
+                valueTextShadow: false,
+                colorCircleInner: "#fff",
+                colorNeedleCircleOuter: "#ccc",
+                needleCircleSize: 15,
+                needleCircleOuter: true,
+                animationRule: "linear",
+                needleType: "line",
+                needleStart: 75,
+                needleEnd: 99,
+                needleWidth: 5,
+                borders: true,
+                borderInnerWidth: 0,
+                borderMiddleWidth: 0,
+                borderOuterWidth: 10,
+                colorBorderOuter: "#ccc",
+                colorBorderOuterEnd: "#ccc",
+                colorNeedleShadowDown: "#222",
+                borderShadowWidth: 0,
+                animationTarget: "plate",
+                animationDuration: 500,
+                title: "COIL ^",
+                fontTitleSize: 19,
+                colorTitle: "#f5f5f5",
+                value: 90,
+                animateOnInit: false
+            }).draw();
 
-        const overlay = document.querySelector('.modal-overlay')
-        overlay.addEventListener('click', toggleModal)
+        var i = 0;
+        var value = 270
+        
+        setTimeout(() => {
+            setInterval(function () {
+                i++;
+                if(i>3){
+                    i=0
+                }
+                value =  value - 45;
 
-        var closemodal = document.querySelectorAll('.modal-close')
-        for (var i = 0; i < closemodal.length; i++) {
-            closemodal[i].addEventListener('click', toggleModal)
-        }
+                // gauge.highlights = [
+                //     { from: value - 10, to: value + 10, color: 'lightblue' },
+                //     { from: 70, to: 110, color: 'red' },
+                //     { from: 160, to: 200, color: 'rgba(255,30,0,.25)' },
+                //     // { from: 150, to: 200, color: 'rgba(255,0,225,.25)' },
+                //     { from: 250, to: 290, color: 'red' }
+                // ]
+                gauge.value = value;
+                console.log(gauge.highlights[0].color)
+                gauge.highlights[0].color = "red"
+                
+                ;
+            }, 2000);
+        }, 1000);
+    </script>
 
-        document.onkeydown = function (evt) {
-            evt = evt || window.event
-            var isEscape = false
-            if ("key" in evt) {
-                isEscape = (evt.key === "Escape" || evt.key === "Esc")
-            } else {
-                isEscape = (evt.keyCode === 27)
-            }
-            if (isEscape && document.body.classList.contains('modal-active')) {
-                toggleModal()
-            }
+    <!-- Temperature Guage -->
+    <script>
+
+        var gauge2 = new LinearGauge({
+                renderTo: 'canvas2-id',
+                width: 1250,
+                height: 200,
+                units: "°C",
+                minValue: 0,
+                startAngle: 90,
+                ticksAngle: 180,
+                valueBox: true,
+                maxValue: 220,
+                majorTicks: [
+                    "0",
+                    "20",
+                    "40",
+                    "60",
+                    "80",
+                    "100",
+                    "120",
+                    "140",
+                    "160",
+                    "180",
+                    "200",
+                    "220"
+                ],
+                minorTicks: 2,
+                strokeTicks: true,
+                highlights: [
+                    {
+                        "from": 100,
+                        "to": 220,
+                        "color": "rgba(200, 50, 50, .75)"
+                    }
+                ],
+                colorPlate: "#fff",
+                borderShadowWidth: 0,
+                borders: false,
+                needleType: "arrow",
+                needleWidth: 2,
+                needleCircleSize: 7,
+                needleCircleOuter: true,
+                needleCircleInner: false,
+                animationDuration: 1500,
+                animationRule: "linear",
+                barWidth: 15,
+                value: 35
+            }).draw();
+    </script>
+
+    <!-- RPM Guage -->
+    <script>
+    google.charts.load('current', { 'packages': ['gauge'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Label', 'Value'],
+            ['Memory', 80],
+            // ['CPU', 55],
+            // ['Network', 68]
+        ]);
+        var options = {
+            width: 200, height: 200,
+            redFrom: 90, redTo: 100,
+            yellowFrom: 75, yellowTo: 90,
+            minorTicks: 5
         };
-
-
-        function toggleModal() {
-            const body = document.querySelector('body')
-            const modal = document.querySelector('.modal')
-            modal.classList.toggle('opacity-0')
-            modal.classList.toggle('pointer-events-none')
-            body.classList.toggle('modal-active')
-        }
-
-
+        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+        
+        chart.draw(data, options);
+        
+        setInterval(function () {
+            data.setValue(0, 1, 40 + Math.round(60 * Math.random()));
+            chart.draw(data, options);
+        }, 13000);
+        setInterval(function () {
+            data.setValue(1, 1, 40 + Math.round(60 * Math.random()));
+            chart.draw(data, options);
+        }, 5000);
+        setInterval(function () {
+            data.setValue(2, 1, 60 + Math.round(20 * Math.random()));
+            chart.draw(data, options);
+        }, 26000);
+    }
     </script>
 
     <!-- Average Compression History graph -->
     <script>
-        var avg_his_graphcanvas = document.getElementById("avg_his_compression_graph").getContext("2d");
-        var avg_his_graphdata = {
+        var temp_graphcanvas = document.getElementById("temperature_graph").getContext("2d");
+        var temp_graphdata = {
             labels: [],
             datasets: [
                 {
-                    label: "Pre Compression",
+                    label: "Temperature",
                     yAxisID: 'A',
                     fill: false,
                     lineTension: 0.1,
@@ -1070,42 +774,10 @@
                     pointRadius: 5,
                     pointHitRadius: 10,
                     data: [],
-                },
-                {
-                    label: "Main Compression",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "green",
-                    borderColor: "green",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [],
-                },
-                {
-                    label: "Ejection Compression",
-                    yAxisID: 'B',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "purple",
-                    borderColor: "purple",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [],
-                },
+                }
             ],
         };
-        var avg_his_graphoptions = {
+        var temp_graphoptions = {
             responsive: true,
             showTooltips: true,
             showLines: true,
@@ -1114,31 +786,17 @@
                     scaleLabel: {
                         display: true,
                         fontSize: 25,
-                        labelString: 'Compression (kN)'
+                        labelString: 'Temperature (°C)'
                     },
                     id: 'A',
                     type: 'linear',
                     position: 'left',
                     ticks: {
                         beginAtZero: true,
-                        fontSize: 20,
-                        max: 50
+                        fontSize: 15,
+                        max: 250
                     }
-                }, {
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 25,
-                        labelString: 'Ejection Compression (KG)'
-                    },
-                    id: 'B',
-                    type: 'linear',
-                    position: 'right',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 20,
-                        max: 200
-                    }
-                }],
+                },],
                 xAxes: [{
                     type: 'time',
                     //display: false,
@@ -1200,72 +858,17 @@
                 }
             },
         };
-        var avg_his_compression_graph = Chart.Line(avg_his_graphcanvas, {
-            data: avg_his_graphdata,
-            options: avg_his_graphoptions,
+        var temp_compression_graph = Chart.Line(temp_graphcanvas, {
+            data: temp_graphdata,
+            options: temp_graphoptions,
         });
-
-        async function searchhistory() {
-
-            const queryAvgURL = `${hostt}/api/search/average/csv/${currentBatch}`
-
-            const avgData = await fetch(queryAvgURL);
-            const avggbatch = await avgData.json();
-
-            let avglistt = avggbatch;
-
-            var from = currentrotation - 500;
-            var to = currentrotation;
-
-            console.log(from)
-            console.log(to)
-
-            function loadavglist() {
-
-                let i = -1;
-                let j = 1;
-                let k = 0;
-                for (let avgg of avglistt) {
-                    i++;
-                    if (i >= from && i <= to && i > 0) {
-                        from++;
-                        let avgdataa = avggbatch[i]
-                        //console.log(`TIME:${avgdataa[0]},RTN:${avgdataa[1]},PRE:${avgdataa[2]},MAIN:${avgdataa[3]},EJN:${avgdataa[4]}`);
-
-                        avg_his_compression_graph.data.labels[k] = avgdataa[0];
-
-                        avg_his_compression_graph.data.datasets[0].data[k] = avgdataa[2];
-
-                        avg_his_compression_graph.data.datasets[1].data[k] = avgdataa[3];
-
-                        avg_his_compression_graph.data.datasets[2].data[k] = avgdataa[4];
-
-                        avg_his_compression_graph.update();
-                        k++;
-                        j++;
-                    } else if (i > to) {
-                        // await fetch(generatereportURL);
-                    }
-                }
-            }
-
-            loadavglist();
-        };
 
     </script>
 
     <!-- APIs -->
     <script>
-        var hostname = "10.0.0.65:3000";
-        
-        var payloadURL;
-        var machineURL;
-        var hostt;
-
-            payloadURL = `http://${hostname}/api/payload`;
-            machineURL = `http://${hostname}/api/machine`;
-            hostt = `http://${hostname}`;
-        
+        var hostname = "localhost:6001";
+        var payloadURL = `http://${hostname}/api/payload`;
     </script>
 
     <!-- Time -->
@@ -1278,945 +881,21 @@
         }, 1000);
     </script>
 
-    <!-- Realtime Graph 1 -->
-    <script>
-        var graph1canvas = document.getElementById('compression_graph');
-        var graph1data = {
-            labels: ["Punch 1B", "Punch 1D", "Punch 2B", "Punch 2D", "Punch 3B", "Punch 3D", "Punch 4B", "Punch 4D"],
-            datasets: [
-                {
-                    label: "Pre Compression",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                    ],
-                    borderColor: "#F0F6F7FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Main Compression",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                    ],
-                    borderColor: "#85B3D1FF",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointBackgroundColor: "#fff",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Ejection",
-                    yAxisID: 'B',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-
-                    ],
-                    borderColor: "#2460A7FF",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointBackgroundColor: "#fff",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Reference",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#FFFFFFFF",
-                    borderColor: "#FFFFFFFF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    data: [
-                        35,
-                        35,
-                        35,
-                        35,
-                        35,
-                        35,
-                        35,
-                        35,
-                    ],
-                    type: 'line',
-                    order: 1,
-                    options: {
-                        legend: {
-                            display: false,
-                            labels: {
-                                hidden: true
-                            }
-                        }
-                    }
-                },
-            ],
-        };
-
-        var graph1option = {
-            tooltips: { enabled: false },
-            hover: { mode: null },
-            showTooltips: false,
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 23,
-                        labelString: 'Compression (kN)'
-                    },
-                    id: 'A',
-                    type: 'linear',
-                    position: 'left',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 20,
-                        fontColor: "white",
-                        max: 50
-                    }
-                }, {
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 23,
-                        labelString: 'Ejection Compression (KG)'
-                    },
-                    id: 'B',
-                    type: 'linear',
-                    position: 'right',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 20,
-                        fontColor: "white",
-                        max: 200
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                    },
-                    ticks: {
-                        fontSize: 15,
-                        fontColor: "white",
-                    }
-                }],
-            },
-            legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                    fontSize: 20,
-
-                }
-            },
-        }
-
-        var graph1 = Chart.Bar(graph1canvas, {
-            data: graph1data,
-            options: graph1option,
-        });
-
-    </script>
-
-    <!-- Realtime Graph 2 -->
-    <script>
-        var pregraphcanvas = document.getElementById('precompression_graph');
-        var pregraphdata = {
-            labels: ["Punch 1B", "Punch 1D", "Punch 2B", "Punch 2D", "Punch 3B", "Punch 3D", "Punch 4B", "Punch 4D"],
-            datasets: [
-                {
-                    label: "Pre Compression",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF",
-                        "#F0F6F7FF"
-                    ],
-                    borderColor: "#F0F6F7FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Upper Tolerance",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#FF0000FF",
-                    borderColor: "#FF0000FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-                {
-                    label: "Lower Tolerance",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#ffff00FF",
-                    borderColor: "#ffff00FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-                {
-                    label: "Force Line",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#ffffFFFF",
-                    borderColor: "#ffffFFFF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-            ],
-        };
-        var pregraphoptions = {
-            tooltips: { enabled: false },
-            hover: { mode: null },
-            showTooltips: false,
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 20
-                    }
-                }],
-            },
-        };
-        var pregraph = Chart.Bar(pregraphcanvas, {
-            data: pregraphdata,
-            options: pregraphoptions,
-        });
-
-        var maingraphcanvas = document.getElementById('maincompression_graph');
-        var maingraphdata = {
-            labels: ["Punch 1B", "Punch 1D", "Punch 2B", "Punch 2D", "Punch 3B", "Punch 3D", "Punch 4B", "Punch 4D"],
-            datasets: [
-                {
-                    label: "Main Compression",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF",
-                        "#85B3D1FF"
-                    ],
-                    borderColor: "#85B3D1FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Upper Tolerance",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#FF0000FF",
-                    borderColor: "#FF0000FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-                {
-                    label: "Lower Tolerance",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#ffff00FF",
-                    borderColor: "#ffff00FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-                {
-                    label: "Force Line",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#ffffFFFF",
-                    borderColor: "#ffffFFFF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-            ],
-        };
-        var maingraphoptions = {
-            tooltips: { enabled: false },
-            hover: { mode: null },
-            showTooltips: false,
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 50
-                    }
-                }]
-            },
-
-        };
-        var maingraph = Chart.Bar(maingraphcanvas, {
-            data: maingraphdata,
-            options: maingraphoptions,
-        });
-
-        var ejngraphcanvas = document.getElementById('ejncompression_graph');
-        var ejngraphdata = {
-            labels: ["Punch 1B", "Punch 1D", "Punch 2B", "Punch 2D", "Punch 3B", "Punch 3D", "Punch 4B", "Punch 4D"],
-            datasets: [
-                {
-                    label: "Main Compression",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF",
-                        "#2460A7FF"
-                    ],
-                    borderColor: "#2460A7FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Upper Tolerance",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#FF0000FF",
-                    borderColor: "#FF0000FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-                {
-                    label: "Force Line",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#ffffFFFF",
-                    borderColor: "#ffffFFFF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                    type: 'line',
-                },
-            ],
-        };
-        var ejngraphoptions = {
-            tooltips: { enabled: false },
-            hover: { mode: null },
-            showTooltips: false,
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 200
-                    }
-                }]
-            },
-
-        };
-        var ejngraph = Chart.Bar(ejngraphcanvas, {
-            data: ejngraphdata,
-            options: ejngraphoptions,
-        });
-
-        var avggraphcanvas = document.getElementById('avgcompression_graph');
-        var avggraphdata = {
-            labels: ["Pre Compression", "Main Compression", "Ejection Compression"],
-            datasets: [
-                {
-                    label: "Compression Average",
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: [ "yellow","green","purple"],
-                    borderColor: ["yellow", "green", "purple"],
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-            ],
-        };
-        var avggraphoptions = {
-            tooltips: { enabled: false },
-            hover: { mode: null },
-            showTooltips: false,
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                    },
-                }],
-                xAxes: [{
-                    barPercentage: 0.4
-                }]
-
-            },
-
-        };
-        var avggraph = Chart.Bar(avggraphcanvas, {
-            data: avggraphdata,
-            options: avggraphoptions,
-        });
-
-    </script>
-
-    <!-- Search Graph -->
-    <script>
-        var graph2canvas = document.getElementById('compression_search_graph');
-        var graph2data = {
-            labels: ["Punch 1B", "Punch 1D", "Punch 2B", "Punch 2D", "Punch 3B", "Punch 3D", "Punch 4B", "Punch 4D"],
-            datasets: [
-                {
-                    label: "Pre Compression",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#F0F6F7FF",
-                    borderColor: "#F0F6F7FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Main Compression",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#85B3D1FF",
-                    borderColor: "#85B3D1FF",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointBackgroundColor: "#fff",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-                {
-                    label: "Ejection",
-                    yAxisID: 'B',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#2460A7FF",
-                    borderColor: "#2460A7FF",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointBackgroundColor: "#fff",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-            ],
-        };
-        var graph2option = {
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 15,
-                        labelString: 'Compression (kN)'
-                    },
-                    id: 'A',
-                    type: 'linear',
-                    position: 'left',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 10,
-                        max: 50
-                    }
-                }, {
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 15,
-                        labelString: 'Ejection Compression (KG)'
-                    },
-                    id: 'B',
-                    type: 'linear',
-                    position: 'right',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 15,
-                        max: 200
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 20,
-                        labelString: 'Punch Number'
-                    },
-                }],
-            }
-        };
-        var graph2 = Chart.Bar(graph2canvas, {
-            data: graph2data,
-            options: graph2option,
-        });
-
-        var graph3canvas = document.getElementById('compression_avg_graph');
-        var graph3data = {
-            labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-            datasets: [
-                {
-                    label: "Pre Compression Average",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#F0F6F7FF",
-                    borderColor: "#F0F6F7FF",
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                },
-                {
-                    label: "Main Compression Average",
-                    yAxisID: 'A',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#85B3D1FF",
-                    borderColor: "#85B3D1FF",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointBackgroundColor: "#fff",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                },
-                {
-                    label: "Ejection Average",
-                    yAxisID: 'B',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "#2460A7FF",
-                    borderColor: "#2460A7FF",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgba(75,192,192,1)",
-                    pointBackgroundColor: "#fff",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHitRadius: 10,
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                },
-            ],
-        };
-        var graph3option = {
-            showLines: true,
-            scales: {
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 15,
-                        labelString: 'Compression (kN)'
-                    },
-                    id: 'A',
-                    type: 'linear',
-                    position: 'left',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 10,
-                        max: 50
-                    }
-                }, {
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 15,
-                        labelString: 'Ejection Compression (KG)'
-                    },
-                    id: 'B',
-                    type: 'linear',
-                    position: 'right',
-                    ticks: {
-                        beginAtZero: true,
-                        fontSize: 15,
-                        max: 200
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 20,
-                        labelString: 'Rotation Number'
-                    },
-                }],
-            },
-
-        };
-        var graph3 = Chart.Bar(graph3canvas, {
-            data: graph3data,
-            options: graph3option,
-        });
-
-    </script>
-
     <!-- PAYLOAD API fetch -->
     <script>
+        document.getElementById("machine_status_metric").innerHTML = "ON";
+            document.getElementById("heating_time_metric").innerHTML = "100";
+            document.getElementById("production_metric").innerHTML = "100";
+
+            document.getElementById("j1-status").innerHTML = "Hello";
+            document.getElementById("j2-status").innerHTML = "Hello";
+            document.getElementById("j3-status").innerHTML = "Hello";
+            document.getElementById("j4-status").innerHTML = "Hello";
+            document.getElementById("j5-status").innerHTML = "Hello";
+            document.getElementById("j6-status").innerHTML = "Hello";
+            document.getElementById("j7-status").innerHTML = "Hello";
+            document.getElementById("j8-status").innerHTML = "Hello";
+
         async function fetchpayloadapiHF() {
             fetch(payloadURL)
                 .then((resp) => resp.json()) // Transform the data into json
@@ -2224,400 +903,20 @@
                     // Here you get the data to modify as you please
                     payload = data
 
-                    document.getElementById("batch_number_metric").innerHTML = payload.batch;
-                    currentBatch = payload.batch;
-
-                    document.getElementById("rotation_number_metric").innerHTML = payload.rotation_no;
-                    currentrotation = payload.rotation_no;
-
-                    document.getElementById("rotation1_number_metric").innerHTML = payload.rotation_no;
-                    document.getElementById("punch_number_metric").innerHTML = payload.present_punch;
-
-                    document.getElementById("avg-pre").innerHTML = payload.precompression_avg;
-                    avggraph.data.datasets[0].data[0] = payload.precompression_avg;
-                    document.getElementById("avg-main").innerHTML = payload.maincompression_avg;
-                    avggraph.data.datasets[0].data[1] = payload.maincompression_avg;
-                    document.getElementById("avg-ejn").innerHTML = payload.ejection_avg;
-                    avggraph.data.datasets[0].data[2] = payload.ejection_avg;
-
-                    if (payload.punch1.status == false) {
-                        document.getElementById("p1-status").style.background = "red";
-
-                    }
-                    else {
-                        document.getElementById("p1-status").style.background = "green";
-                        document.getElementById("p1-pre").innerHTML = payload.punch1.precompression;
-                        document.getElementById("p1-main").innerHTML = payload.punch1.maincompression;
-                        document.getElementById("p1-ejn").innerHTML = payload.punch1.ejection;
-                        graph1.data.datasets[0].data[0] = payload.punch1.precompression;
-                        graph1.data.datasets[1].data[0] = payload.punch1.maincompression;
-                        graph1.data.datasets[2].data[0] = payload.punch1.ejection;
-                        pregraph.data.datasets[0].data[0] = payload.punch1.precompression;
-                        maingraph.data.datasets[0].data[0] = payload.punch1.maincompression;
-                        ejngraph.data.datasets[0].data[0] = payload.punch1.ejection;
-
-                        if (payload.punch1.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[0] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[0] = "#FF0000FF";
-                        } else if (payload.punch1.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[0] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[0] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[0] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[0] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch1.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[0] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[0] = "#FF0000FF";
-                        } else if (payload.punch1.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[0] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[0] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[0] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[0] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch1.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[0] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[0] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[0] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[0] = "#2460A7FF";
-                        }
-                    }
-
-
-                    if (payload.punch2.status == false) {
-                        document.getElementById("p2-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p2-status").style.background = "green";
-                        document.getElementById("p2-pre").innerHTML = payload.punch2.precompression;
-                        document.getElementById("p2-main").innerHTML = payload.punch2.maincompression;
-                        document.getElementById("p2-ejn").innerHTML = payload.punch2.ejection;
-                        graph1.data.datasets[0].data[1] = payload.punch2.precompression;
-                        graph1.data.datasets[1].data[1] = payload.punch2.maincompression;
-                        graph1.data.datasets[2].data[1] = payload.punch2.ejection;
-                        pregraph.data.datasets[0].data[1] = payload.punch2.precompression;
-                        maingraph.data.datasets[0].data[1] = payload.punch2.maincompression;
-                        ejngraph.data.datasets[0].data[1] = payload.punch2.ejection;
-
-                        if (payload.punch2.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[1] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[1] = "#FF0000FF";
-                        } else if (payload.punch2.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[1] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[1] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[1] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[1] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch2.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[1] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[1] = "#FF0000FF";
-                        } else if (payload.punch2.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[1] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[1] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[1] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[1] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch2.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[1] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[1] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[1] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[1] = "#2460A7FF";
-                        }
-                    }
-
-                    if (payload.punch3.status == false) {
-                        document.getElementById("p3-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p3-status").style.background = "green";
-                        document.getElementById("p3-pre").innerHTML = payload.punch3.precompression;
-                        document.getElementById("p3-main").innerHTML = payload.punch3.maincompression;
-                        document.getElementById("p3-ejn").innerHTML = payload.punch3.ejection;
-                        graph1.data.datasets[0].data[2] = payload.punch3.precompression;
-                        graph1.data.datasets[1].data[2] = payload.punch3.maincompression;
-                        graph1.data.datasets[2].data[2] = payload.punch3.ejection;
-                        pregraph.data.datasets[0].data[2] = payload.punch3.precompression;
-                        maingraph.data.datasets[0].data[2] = payload.punch3.maincompression;
-                        ejngraph.data.datasets[0].data[2] = payload.punch3.ejection;
-
-                        if (payload.punch3.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[2] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[2] = "#FF0000FF";
-                        } else if (payload.punch3.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[2] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[2] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[2] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[2] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch3.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[2] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[2] = "#FF0000FF";
-                        } else if (payload.punch3.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[2] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[2] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[2] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[2] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch3.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[2] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[2] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[2] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[2] = "#2460A7FF";
-                        }
-                    }
-
-                    if (payload.punch4.status == false) {
-                        document.getElementById("p4-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p4-status").style.background = "green";
-                        document.getElementById("p4-main").innerHTML = payload.punch4.maincompression;
-                        document.getElementById("p4-pre").innerHTML = payload.punch4.precompression;
-                        document.getElementById("p4-ejn").innerHTML = payload.punch4.ejection;
-                        graph1.data.datasets[0].data[3] = payload.punch4.precompression;
-                        graph1.data.datasets[1].data[3] = payload.punch4.maincompression;
-                        graph1.data.datasets[2].data[3] = payload.punch4.ejection;
-                        pregraph.data.datasets[0].data[3] = payload.punch4.precompression;
-                        maingraph.data.datasets[0].data[3] = payload.punch4.maincompression;
-                        ejngraph.data.datasets[0].data[3] = payload.punch4.ejection;
-
-                        if (payload.punch4.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[3] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[3] = "#FF0000FF";
-                        } else if (payload.punch4.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[3] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[3] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[3] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[3] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch4.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[3] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[3] = "#FF0000FF";
-                        } else if (payload.punch4.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[3] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[3] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[3] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[3] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch4.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[3] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[3] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[3] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[3] = "#2460A7FF";
-                        }
-
-                    }
-
-                    if (payload.punch5.status == false) {
-                        document.getElementById("p5-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p5-status").style.background = "green";
-                        document.getElementById("p5-pre").innerHTML = payload.punch5.precompression;
-                        document.getElementById("p5-main").innerHTML = payload.punch5.maincompression;
-                        document.getElementById("p5-ejn").innerHTML = payload.punch5.ejection;
-                        graph1.data.datasets[0].data[4] = payload.punch5.precompression;
-                        graph1.data.datasets[1].data[4] = payload.punch5.maincompression;
-                        graph1.data.datasets[2].data[4] = payload.punch5.ejection;
-                        pregraph.data.datasets[0].data[4] = payload.punch5.precompression;
-                        maingraph.data.datasets[0].data[4] = payload.punch5.maincompression;
-                        ejngraph.data.datasets[0].data[4] = payload.punch5.ejection;
-
-                        if (payload.punch5.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[4] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[4] = "#FF0000FF";
-                        } else if (payload.punch5.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[4] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[4] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[4] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[4] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch5.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[4] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[4] = "#FF0000FF";
-                        } else if (payload.punch5.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[4] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[4] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[4] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[4] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch5.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[4] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[4] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[4] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[4] = "#2460A7FF";
-                        }
-                    }
-
-                    if (payload.punch6.status == false) {
-                        document.getElementById("p6-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p6-status").style.background = "green";
-                        document.getElementById("p6-pre").innerHTML = payload.punch6.precompression;
-                        document.getElementById("p6-main").innerHTML = payload.punch6.maincompression;
-                        document.getElementById("p6-ejn").innerHTML = payload.punch6.ejection;
-                        graph1.data.datasets[0].data[5] = payload.punch6.precompression;
-                        graph1.data.datasets[1].data[5] = payload.punch6.maincompression;
-                        graph1.data.datasets[2].data[5] = payload.punch6.ejection;
-                        pregraph.data.datasets[0].data[5] = payload.punch6.precompression;
-                        maingraph.data.datasets[0].data[5] = payload.punch6.maincompression;
-                        ejngraph.data.datasets[0].data[5] = payload.punch6.ejection;
-
-                        if (payload.punch6.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[5] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[5] = "#FF0000FF";
-                        } else if (payload.punch6.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[5] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[5] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[5] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[5] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch6.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[5] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[5] = "#FF0000FF";
-                        } else if (payload.punch6.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[5] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[5] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[5] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[5] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch6.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[5] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[5] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[5] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[5] = "#2460A7FF";
-                        }
-                    }
-
-
-                    if (payload.punch7.status == false) {
-                        document.getElementById("p7-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p7-status").style.background = "green";
-                        document.getElementById("p7-pre").innerHTML = payload.punch7.precompression;
-                        document.getElementById("p7-main").innerHTML = payload.punch7.maincompression;
-                        document.getElementById("p7-ejn").innerHTML = payload.punch7.ejection;
-                        graph1.data.datasets[0].data[6] = payload.punch7.precompression;
-                        graph1.data.datasets[1].data[6] = payload.punch7.maincompression;
-                        graph1.data.datasets[2].data[6] = payload.punch7.ejection;
-                        pregraph.data.datasets[0].data[6] = payload.punch7.precompression;
-                        maingraph.data.datasets[0].data[6] = payload.punch7.maincompression;
-                        ejngraph.data.datasets[0].data[6] = payload.punch7.ejection;
-
-                        if (payload.punch7.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[6] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[6] = "#FF0000FF";
-                        } else if (payload.punch7.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[6] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[6] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[6] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[6] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch7.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[6] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[6] = "#FF0000FF";
-                        } else if (payload.punch7.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[6] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[6] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[6] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[6] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch7.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[6] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[6] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[6] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[6] = "#2460A7FF";
-                        }
-                    }
-
-                    if (payload.punch8.status == false) {
-                        document.getElementById("p8-status").style.background = "red";
-                    }
-                    else {
-                        document.getElementById("p8-status").style.background = "green";
-                        document.getElementById("p8-pre").innerHTML = payload.punch8.precompression;
-                        document.getElementById("p8-main").innerHTML = payload.punch8.maincompression;
-                        document.getElementById("p8-ejn").innerHTML = payload.punch8.ejection;
-                        graph1.data.datasets[0].data[7] = payload.punch8.precompression;
-                        graph1.data.datasets[1].data[7] = payload.punch8.maincompression;
-                        graph1.data.datasets[2].data[7] = payload.punch8.ejection;
-                        pregraph.data.datasets[0].data[7] = payload.punch8.precompression;
-                        maingraph.data.datasets[0].data[7] = payload.punch8.maincompression;
-                        ejngraph.data.datasets[0].data[7] = payload.punch8.ejection;
-
-                        if (payload.punch8.precompression > pre_upper) {
-                            graph1.data.datasets[0].backgroundColor[7] = "#FF0000FF";
-                            pregraph.data.datasets[0].backgroundColor[7] = "#FF0000FF";
-                        } else if (payload.punch8.precompression < pre_lower) {
-                            graph1.data.datasets[0].backgroundColor[7] = "#ffff00FF";
-                            pregraph.data.datasets[0].backgroundColor[7] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[0].backgroundColor[7] = "#F0F6F7FF";
-                            pregraph.data.datasets[0].backgroundColor[7] = "#F0F6F7FF";
-                        }
-
-                        if (payload.punch8.maincompression > main_upper) {
-                            graph1.data.datasets[1].backgroundColor[7] = "#FF0000FF";
-                            maingraph.data.datasets[0].backgroundColor[7] = "#FF0000FF";
-                        } else if (payload.punch8.maincompression < main_lower) {
-                            graph1.data.datasets[1].backgroundColor[7] = "#ffff00FF";
-                            maingraph.data.datasets[0].backgroundColor[7] = "#ffff00FF";
-                        } else {
-                            graph1.data.datasets[1].backgroundColor[7] = "#85B3D1FF";
-                            maingraph.data.datasets[0].backgroundColor[7] = "#85B3D1FF";
-                        }
-
-                        if (payload.punch8.ejection > ejn_upper) {
-                            graph1.data.datasets[2].backgroundColor[7] = "#FF0000FF";
-                            ejngraph.data.datasets[0].backgroundColor[7] = "#FF0000FF";
-                        } else {
-                            graph1.data.datasets[2].backgroundColor[7] = "#2460A7FF";
-                            ejngraph.data.datasets[0].backgroundColor[7] = "#2460A7FF";
-                        }
-                    }
-
-                    graph1.update();
-                    pregraph.update();
-                    maingraph.update();
-                    ejngraph.update();
-                    avggraph.update();
-
+                    console.log(payload.status)
+                    document.getElementById("machine_status_metric").innerHTML = "ON";
+                    document.getElementById("heating_time_metric").innerHTML = "100";
+                    document.getElementById("production_count").innerHTML = 100;
+                    
+                    document.getElementById("j1-status").innerHTML = "Hello";
+                    document.getElementById("j2-status").innerHTML = "Hello";
+                    document.getElementById("j3-status").innerHTML = "Hello";
+                    document.getElementById("j4-status").innerHTML = "Hello";
+                    document.getElementById("j5-status").innerHTML = "Hello";
+                    document.getElementById("j6-status").innerHTML = "Hello";
+                    document.getElementById("j7-status").innerHTML = "Hello";
+                    document.getElementById("j8-status").innerHTML = "Hello";
+                    
                 })
                 .catch(function (error) {
                     // If there is any error you will catch them here
@@ -2625,328 +924,49 @@
                 });
         };
 
-        setInterval(() => {
-            fetchpayloadapiHF();
-        }, 103);
+        function startfetching() {
+            setInterval(() => {
+                // fetchpayloadapiHF();
+            }, 103);
+        }
     </script>
 
-    <!-- Machine API fetch -->
+    <!-- Set Delay -->
     <script>
-        var pre_upper ;
-        var pre_lower ;
-        var main_upper;
-        var main_lower;
-        var ejn_upper ;
+        function increment(params) {
+            document.getElementById("heating_time_metric").innerHTML++    
+        }
 
-        var pre_force_line = 25
-        var main_force_line = 25
-        var ejn_force_line = 10
+        function decrement(params) {
+            document.getElementById("heating_time_metric").innerHTML--
+        }
 
-        // Used for machine related metric cards
-        async function fetchmachineapi() {
+        function setDelay1(params) {
+            document.getElementById("heating_time_metric").innerHTML = parseInt(10);
+        }
 
-            fetch(machineURL)
-                .then((resp) => resp.json()) // Transform the data into json
-                .then(function (data) {
-                    // Here you get the data to modify as you please
-                    machine = data;
+        function setDelay2(params) {
+            document.getElementById("heating_time_metric").innerHTML = parseInt(20);
+        }
 
-                    // Update metric cards
-                    document.getElementById("status").innerHTML = machine.stats.status;
-
-                    if (machine.stats.status == "ONLINE") {
-                        document.getElementById("colorr").style.background = "green";
-                    } else {
-                        document.getElementById("colorr").style.background = "red";
-                    }
-
-                    document.getElementById("count_metric").innerHTML = machine.stats.count;
-                    document.getElementById("production_per_hour_metric").innerHTML = machine.stats.tablets_per_hour;
-                    document.getElementById("rpm_metric").innerHTML = machine.control.turret_rpm;
-                    // document.getElementById("uptime_metric").innerHTML = machine.stats.uptime;
-
-                    document.getElementById("operator_name_metric").innerHTML = machine.operator_name;
-                    document.getElementById("recipie_id_metric").innerHTML = machine.product.recipie_id;
-                    //document.getElementById("name_metric").innerHTML = machine.product.name;
-                    pre_upper = machine.precompression_upperlimit;
-                    pre_lower = machine.precompression_lowerlimit;
-                    main_upper = machine.maincompression_upperlimit;
-                    main_lower = machine.maincompression_lowerlimit;
-                    ejn_upper = machine.ejection_upperlimit;
-
-                    pregraph.data.datasets[1].data[0] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[1] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[2] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[3] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[4] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[5] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[6] = machine.precompression_upperlimit;
-                    pregraph.data.datasets[1].data[7] = machine.precompression_upperlimit;
-
-                    pregraph.data.datasets[2].data[0] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[1] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[2] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[3] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[4] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[5] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[6] = machine.precompression_lowerlimit;
-                    pregraph.data.datasets[2].data[7] = machine.precompression_lowerlimit;
-
-                    maingraph.data.datasets[1].data[0] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[1] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[2] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[3] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[4] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[5] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[6] = machine.maincompression_upperlimit;
-                    maingraph.data.datasets[1].data[7] = machine.maincompression_upperlimit;
-
-                    maingraph.data.datasets[2].data[0] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[1] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[2] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[3] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[4] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[5] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[6] = machine.maincompression_lowerlimit;
-                    maingraph.data.datasets[2].data[7] = machine.maincompression_lowerlimit;
-
-                    ejngraph.data.datasets[1].data[0] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[1] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[2] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[3] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[4] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[5] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[6] = machine.ejection_upperlimit;
-                    ejngraph.data.datasets[1].data[7] = machine.ejection_upperlimit;
-
-                    pregraph.data.datasets[3].data[0] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[1] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[2] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[3] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[4] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[5] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[6] = machine.pre_forceline;
-                    pregraph.data.datasets[3].data[7] = machine.pre_forceline;
-
-                    maingraph.data.datasets[3].data[0] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[1] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[2] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[3] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[4] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[5] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[6] = machine.main_forceline;
-                    maingraph.data.datasets[3].data[7] = machine.main_forceline;
-
-                    ejngraph.data.datasets[2].data[0] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[1] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[2] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[3] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[4] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[5] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[6] = machine.ejn_forceline;
-                    ejngraph.data.datasets[2].data[7] = machine.ejn_forceline;
-
-                    document.getElementById("precompression_upperlimit_metric").innerHTML = machine.precompression_upperlimit;
-                    document.getElementById("precompression_lowerlimit_metric").innerHTML = machine.precompression_lowerlimit;
-                    document.getElementById("maincompression_upperlimit_metric").innerHTML = machine.maincompression_upperlimit;
-                    document.getElementById("maincompression_lowerlimit_metric").innerHTML = machine.maincompression_lowerlimit;
-                    document.getElementById("ejection_limit_metric").innerHTML = machine.ejection_upperlimit;
-
-                })
-                .catch(function (error) {
-                    // If there is any error you will catch them here
-                    console.log("[ MACHINE FETCH ERROR ]")
-                });
-
-        };
-        setInterval(() => {
-            fetchmachineapi();
-        }, 808);
+        function setDelay3(params) {
+            document.getElementById("heating_time_metric").innerHTML = parseInt(30);
+        }
     </script>
 
-    <!-- Search -->
+    <!-- Controls -->
     <script>
-        const searchURL = `${hostt}/api/search/rotation/`;
-        var currentBatch;
-        var currentrotation;
+        function setReady(params) {
+            document.getElementById("heating_time_metric")
 
-        addEventListener("keydown", function (event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                search()
-            }
-        });
+        }
 
-        async function search() {
-            var x = document.getElementById("searchRotationNumber");
-            var rtn = "";
-            var i;
-            for (i = 0; i < x.length; i++) {
-                rtn += x.elements[i].value;
-            }
-            console.log(rtn);
-            querydb(rtn);
+        function setStart(params) {
+            
+        }
 
-            const queryAvgURL = `${hostt}/api/search/average/csv/${currentBatch}`
-
-            const avgData = await fetch(queryAvgURL);
-            const avggbatch = await avgData.json();
-
-            let avglistt = avggbatch;
-
-            var from = parseInt(rtn);
-            var to = from + 9;
-
-            console.log(from)
-            console.log(to)
-
-            function loadavglist() {
-
-                let i = -1;
-                let j = 1;
-                let k = 0;
-                let l = 0;
-                for (let avgg of avglistt) {
-                    i++;
-                    if (i >= from && i <= to) {
-                        l = i - 1;
-                        from++;
-                        let avgdataa = avggbatch[l]
-                        console.log(`RTN:${avgdataa[1]},PRE:${avgdataa[2]},MAIN:${avgdataa[3]},EJN:${avgdataa[4]}`);
-
-                        document.getElementById(`rtn-${j}`).innerHTML = avgdataa[1];
-                        graph3.data.labels[k] = avgdataa[1];
-                        document.getElementById(`rtn${j}-pre-search`).innerHTML = avgdataa[2];
-                        graph3.data.datasets[0].data[k] = avgdataa[2];
-                        document.getElementById(`rtn${j}-main-search`).innerHTML = avgdataa[3];
-                        graph3.data.datasets[1].data[k] = avgdataa[3];
-                        document.getElementById(`rtn${j}-ejn-search`).innerHTML = avgdataa[4];
-                        graph3.data.datasets[2].data[k] = avgdataa[4];
-
-                        graph3.update();
-                        k++;
-                        j++;
-                    } else if (i > to) {
-                        // await fetch(generatereportURL);
-                    }
-                }
-            }
-
-            loadavglist();
-
-        };
-
-        async function querydb(input_rotation) {
-            // Create Request URL
-            let requesturl = `${searchURL}${input_rotation}`
-
-            // Hit API
-            const searchResponse = await fetch(requesturl);
-            const payload = await searchResponse.json();
-            // console.log(payload);
-
-            // Assigning variable as per array loacation
-            let batch = 1
-            let ejnavg = 2
-            let mainavg = 3
-            let p1ejn = 4
-            let p1main = 5
-            let p1pre = 6
-            let p1status = 7
-            let p2ejn = 8
-            let p2main = 9
-            let p2pre = 10
-            let p2status = 11
-            let p3ejn = 12
-            let p3main = 13
-            let p3pre = 14
-            let p3status = 15
-            let p4ejn = 16
-            let p4main = 17
-            let p4pre = 18
-            let p4status = 19
-            let p5ejn = 20
-            let p5main = 21
-            let p5pre = 22
-            let p5status = 23
-            let p6ejn = 24
-            let p6main = 25
-            let p6pre = 26
-            let p6status = 27
-            let p7ejn = 28
-            let p7main = 29
-            let p7pre = 30
-            let p7status = 31
-            let p8ejn = 32
-            let p8main = 33
-            let p8pre = 34
-            let p8status = 35
-            let preavg = 36
-            let rotation = 37
-
-            // if ( payload[p1status] == false ) {
-
-            // } else if (payload[p1status] == true) { }
-
-            // if (payload[p1pre] > payload.precompression_upperlimit){
-            //     document.getElementById('p1-pre-indicator-down').classList.add('hidden');
-            //     document.getElementById('p1-pre-indicator-up').classList.remove('hidden');
-            // }
-
-
-            document.getElementById("p1-pre-search").innerHTML = payload[p1pre];
-            document.getElementById("p2-pre-search").innerHTML = payload[p2pre];
-            document.getElementById("p3-pre-search").innerHTML = payload[p3pre];
-            document.getElementById("p4-pre-search").innerHTML = payload[p4pre];
-            document.getElementById("p5-pre-search").innerHTML = payload[p5pre];
-            document.getElementById("p6-pre-search").innerHTML = payload[p6pre];
-            document.getElementById("p7-pre-search").innerHTML = payload[p7pre];
-            document.getElementById("p8-pre-search").innerHTML = payload[p8pre];
-            document.getElementById("avg-pre-search").innerHTML = payload[preavg];
-            document.getElementById("p1-main-search").innerHTML = payload[p1main];
-            document.getElementById("p2-main-search").innerHTML = payload[p2main];
-            document.getElementById("p3-main-search").innerHTML = payload[p3main];
-            document.getElementById("p4-main-search").innerHTML = payload[p4main];
-            document.getElementById("p5-main-search").innerHTML = payload[p5main];
-            document.getElementById("p6-main-search").innerHTML = payload[p6main];
-            document.getElementById("p7-main-search").innerHTML = payload[p7main];
-            document.getElementById("p8-main-search").innerHTML = payload[p8main];
-            document.getElementById("avg-main-search").innerHTML = payload[mainavg];
-            document.getElementById("p1-ejn-search").innerHTML = payload[p1ejn];
-            document.getElementById("p2-ejn-search").innerHTML = payload[p2ejn];
-            document.getElementById("p3-ejn-search").innerHTML = payload[p3ejn];
-            document.getElementById("p4-ejn-search").innerHTML = payload[p4ejn];
-            document.getElementById("p5-ejn-search").innerHTML = payload[p5ejn];
-            document.getElementById("p6-ejn-search").innerHTML = payload[p6ejn];
-            document.getElementById("p7-ejn-search").innerHTML = payload[p7ejn];
-            document.getElementById("p8-ejn-search").innerHTML = payload[p8ejn];
-            document.getElementById("avg-ejn-search").innerHTML = payload[ejnavg];
-            graph2.data.datasets[0].data[0] = payload[p1pre];
-            graph2.data.datasets[0].data[1] = payload[p2pre];
-            graph2.data.datasets[0].data[2] = payload[p3pre];
-            graph2.data.datasets[0].data[3] = payload[p4pre];
-            graph2.data.datasets[0].data[4] = payload[p5pre];
-            graph2.data.datasets[0].data[5] = payload[p6pre];
-            graph2.data.datasets[0].data[6] = payload[p7pre];
-            graph2.data.datasets[0].data[7] = payload[p8pre];
-            graph2.data.datasets[1].data[0] = payload[p1main];
-            graph2.data.datasets[1].data[1] = payload[p2main];
-            graph2.data.datasets[1].data[2] = payload[p3main];
-            graph2.data.datasets[1].data[3] = payload[p4main];
-            graph2.data.datasets[1].data[4] = payload[p5main];
-            graph2.data.datasets[1].data[5] = payload[p6main];
-            graph2.data.datasets[1].data[6] = payload[p7main];
-            graph2.data.datasets[1].data[7] = payload[p8main];
-            graph2.data.datasets[2].data[0] = payload[p1ejn];
-            graph2.data.datasets[2].data[1] = payload[p2ejn];
-            graph2.data.datasets[2].data[2] = payload[p3ejn];
-            graph2.data.datasets[2].data[3] = payload[p4ejn];
-            graph2.data.datasets[2].data[4] = payload[p5ejn];
-            graph2.data.datasets[2].data[5] = payload[p6ejn];
-            graph2.data.datasets[2].data[6] = payload[p7ejn];
-            graph2.data.datasets[2].data[7] = payload[p8ejn];
-
-            graph2.update();
+        function setStop(params) {
+            
         }
 
     </script>

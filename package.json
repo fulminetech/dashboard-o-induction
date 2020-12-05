@@ -27,7 +27,6 @@
     "moment": "^2.27.0",
     "nodemon": "^2.0.4",
     "onoff": "^6.0.0",
-    "puppeteer": "^5.3.1",
     "tailwindcss": "^1.4.6"
   }
 }

@@ -3,8 +3,8 @@ const fetch = require('cross-fetch');
 const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
 
-const Gpio = require('onoff').Gpio;
-const proxy = new Gpio(26, 'in', 'falling', { debounceTimeout: 10 });
+// const Gpio = require('onoff').Gpio;
+// const proxy = new Gpio(26, 'in', 'falling', { debounceTimeout: 10 });
 
 var host = "http://localhost"; 
 var os = require("os");
@@ -29,117 +29,30 @@ var noww = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
 console.log(`[ STARTING INFLUX : ${noww} ]`)
 
 const payloadURL = `${host}:3128/api/payload`;
-const machineURL = `${host}:3128/api/machine`;
-var i = 0
-
-var temp_recepie = "DEFAULT";
-var temp_name = "DEFAULT";
-var temp_productname = "DEFAULT"
-
-// Data Structure
-var machine = {
-    operator_name: temp_name,
-    machine_id: 1,
-    maincompression_upperlimit: 0,
-    maincompression_lowerlimit: 0,
-    precompression_upperlimit: 0,
-    precompression_lowerlimit: 0,
-    ejection_upperlimit: 0,
-    main_forceline: 0,
-    pre_forceline: 0,
-    ejn_forceline: 0,
-    product: {
-        recipie_id: temp_recepie,
-        name: temp_productname,
-    },
-    stats: {
-        status: "OFFLINE",
-        count: 0,
-        tablets_per_hour: 0,
-        rpm: 0,
-        active_punches: 0,
-        mainMotor_trip: false,
-        feederMotor_trip: false,
-        emergencyStop_pressed: false,
-        safetyguard_open: false,
-        system_overload: false,
-        uptime: 0,
-    },
-    control: {
-        inching: false,
-        machine_start: false,
-        machine_stop: false,
-        turret_run: false,
-        turret_rpm: 0,
-        forceFeeder_rpm: 0,
-    },
-    time: {
-        date: 0,
-        month: 0,
-        year: 0,
-        hour: 0,
-        minute: 0,
-        second: 0,
-    }
-};
 
 var payload = {
-    batch: 0,
-    data_number: 0, // Rotation Number
-    rotation_no: 0,
-    present_punch: 0,
-    punch1: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
+    status: "ONLINE",
+    production: {
+        startTime: "Loading",
+        productionCount: 0,
+        rejectionCount: 0,
+        rotationCount: 0,
+        productionPerHour: 0,
+        turretRPM: 0,
+        temperature: 0,
+        currentProcess: "LOAD",
+        currentStatus: "OK"
     },
-    punch2: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
+    set: {
+        power: false,
+        delayTime: 0,
     },
-    punch3: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
-    },
-    punch4: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
-    },
-    punch5: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
-    },
-    punch6: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
-    },
-    punch7: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
-    },
-    punch8: {
-        precompression: 0,
-        maincompression: 0,
-        ejection: 0,
-        status: false
-    },
-    precompression_avg: 0,
-    maincompression_avg: 0,
-    ejection_avg: 0,
-};
+    trip: {
+        trip1: false,
+        trip2: false,
+        trip3: false,
+    }
+}
 
 function startmodbus() {
     setInterval(() => {
@@ -162,100 +75,50 @@ async function fetchpayload() {
 
             payload1 = data;
 
-            payload.present_punch = payload1.present_punch;
-            payload.punch1.precompression = payload1.punch1.precompression;
-            payload.punch1.maincompression = payload1.punch1.maincompression;
-            payload.punch1.ejection = payload1.punch1.ejection;
-            payload.punch1.status = payload1.punch1.status;
+            // payload.present_punch = payload1.present_punch;
+            // payload.punch1.precompression = payload1.punch1.precompression;
+            // payload.punch1.maincompression = payload1.punch1.maincompression;
+            // payload.punch1.ejection = payload1.punch1.ejection;
+            // payload.punch1.status = payload1.punch1.status;
 
-            payload.punch2.precompression = payload1.punch2.precompression;
-            payload.punch2.maincompression = payload1.punch2.maincompression;
-            payload.punch2.ejection = payload1.punch2.ejection;
-            payload.punch2.status = payload1.punch2.status;
+            // payload.punch2.precompression = payload1.punch2.precompression;
+            // payload.punch2.maincompression = payload1.punch2.maincompression;
+            // payload.punch2.ejection = payload1.punch2.ejection;
+            // payload.punch2.status = payload1.punch2.status;
 
-            payload.punch3.precompression = payload1.punch3.precompression;
-            payload.punch3.maincompression = payload1.punch3.maincompression;
-            payload.punch3.ejection = payload1.punch3.ejection;
-            payload.punch3.status = payload1.punch3.status;
+            // payload.punch3.precompression = payload1.punch3.precompression;
+            // payload.punch3.maincompression = payload1.punch3.maincompression;
+            // payload.punch3.ejection = payload1.punch3.ejection;
+            // payload.punch3.status = payload1.punch3.status;
 
-            payload.punch4.precompression = payload1.punch4.precompression;
-            payload.punch4.maincompression = payload1.punch4.maincompression;
-            payload.punch4.ejection = payload1.punch4.ejection;
-            payload.punch4.status = payload1.punch4.status;
+            // payload.punch4.precompression = payload1.punch4.precompression;
+            // payload.punch4.maincompression = payload1.punch4.maincompression;
+            // payload.punch4.ejection = payload1.punch4.ejection;
+            // payload.punch4.status = payload1.punch4.status;
 
-            payload.punch5.precompression = payload1.punch5.precompression;
-            payload.punch5.maincompression = payload1.punch5.maincompression;
-            payload.punch5.ejection = payload1.punch5.ejection;
-            payload.punch5.status = payload1.punch5.status;
+            // payload.punch5.precompression = payload1.punch5.precompression;
+            // payload.punch5.maincompression = payload1.punch5.maincompression;
+            // payload.punch5.ejection = payload1.punch5.ejection;
+            // payload.punch5.status = payload1.punch5.status;
 
-            payload.punch6.precompression = payload1.punch6.precompression;
-            payload.punch6.maincompression = payload1.punch6.maincompression;
-            payload.punch6.ejection = payload1.punch6.ejection;
-            payload.punch6.status = payload1.punch6.status
+            // payload.punch6.precompression = payload1.punch6.precompression;
+            // payload.punch6.maincompression = payload1.punch6.maincompression;
+            // payload.punch6.ejection = payload1.punch6.ejection;
+            // payload.punch6.status = payload1.punch6.status
 
-            payload.punch7.precompression = payload1.punch7.precompression;
-            payload.punch7.maincompression = payload1.punch7.maincompression;
-            payload.punch7.ejection = payload1.punch7.ejection;
-            payload.punch7.status = payload1.punch7.status;
+            // payload.punch7.precompression = payload1.punch7.precompression;
+            // payload.punch7.maincompression = payload1.punch7.maincompression;
+            // payload.punch7.ejection = payload1.punch7.ejection;
+            // payload.punch7.status = payload1.punch7.status;
 
-            payload.punch8.precompression = payload1.punch8.precompression;
-            payload.punch8.maincompression = payload1.punch8.maincompression;
-            payload.punch8.ejection = payload1.punch8.ejection;
-            payload.punch8.status = payload1.punch8.status;
+            // payload.punch8.precompression = payload1.punch8.precompression;
+            // payload.punch8.maincompression = payload1.punch8.maincompression;
+            // payload.punch8.ejection = payload1.punch8.ejection;
+            // payload.punch8.status = payload1.punch8.status;
 
-            payload.precompression_avg = payload1.precompression_avg;
-            payload.maincompression_avg = payload1.maincompression_avg;
-            payload.ejection_avg = payload1.ejection_avg;
-        })
-        .catch(err => {
-            console.error("[ MODBUS SERVER OFFLINE ]");
-        });
-
-    fetch(machineURL)
-        .then(res => {
-            if (res.status >= 400) {
-                throw new Error("Bad response from server");
-            }
-            return res.json();
-        })
-        .then(data => {
-
-            machine1 = data;
-
-            machine.maincompression_upperlimit = machine1.maincompression_upperlimit;
-            machine.maincompression_lowerlimit = machine1.maincompression_lowerlimit;
-            machine.precompression_upperlimit = machine1.precompression_upperlimit;
-            machine.precompression_lowerlimit = machine1.precompression_lowerlimit;
-            machine.ejection_upperlimit = machine1.ejection_upperlimit;
-
-            machine.main_forceline = machine1.main_forceline;  
-            machine.pre_forceline = machine1.pre_forceline;
-            machine.ejn_forceline = machine1.ejn_forceline;  
-
-            machine.stats.count = machine1.stats.count;
-            machine.stats.tablets_per_hour = machine1.stats.tablets_per_hour;
-            //machine.stats.rpm = machine1.rpm;
-            //machine.stats.active_punches = machine1.active_punches;
-            //machine.stats.mainMotor_trip = machine1.mainMotorTrip;
-            //machine.stats.feederMotor_trip = machine1.feederMotor_trip;
-            //machine.stats.emergencyStop_pressed = machine1.emergencyStop_pressed;
-            //machine.stats.safetyguard_open = machine1.safetyguard_open;
-            //machine.stats.system_overload = machine1.system_overload;
-
-            // machine.control.inching = machine1.control.inching;
-            // machine.control.machine_start = machine1.control.machine_start;
-            // machine.control.machine_stop = machine1.control.machine_stop;
-            // machine.control.turret_run = machine1.control.turret_run;
-            machine.control.turret_rpm = machine1.control.turret_rpm;
-            // machine.control.forceFeeder_rpm = machine1.control.forceFeeder_rpm;
-
-            machine.time.date = machine1.time.date;
-            machine.time.month = machine1.time.month;
-            machine.time.year = machine1.time.year;
-            machine.time.hour = machine1.time.hour;
-            machine.time.minute = machine1.time.minute;
-            machine.time.second = machine1.time.second;
-
+            // payload.precompression_avg = payload1.precompression_avg;
+            // payload.maincompression_avg = payload1.maincompression_avg;
+            // payload.ejection_avg = payload1.ejection_avg;
         })
         .catch(err => {
             console.error("[ MODBUS SERVER OFFLINE ]");
@@ -314,29 +177,6 @@ const payloadFieldSchema = {
 const payloadTagSchema = {
 
 };
-
-const machineFieldSchema = {
-    productionCount: 'i',
-    productionPerHour: 'i',
-    operatorname: 's',
-    machineID: 's',
-    mcUpperLimit: 'f',
-    mcLowerLimit: 'f',
-    pcUpperLimit: 'f',
-    pcLowerLimit: 'f',
-    ejnUpperLimit: 'f',
-    recipieID: 's',
-    status: 's',
-    rpm: 'i',
-    activePunches: 'i',
-    mainMotorTrip: 'b',
-    feederMotorTrip: 'b',
-    emergencyStop: 'b',
-}
-
-const machineTagsSchema = {
-
-}
 
 // Updated with each rotation
 writePayload = () => {
@@ -426,18 +266,19 @@ fluxmachine = () => {
         .catch(console.error);
 };
 
-var watchproxy = function () {
-    writemachine();
-    proxy.watch((err, value) => {
-        if (err) {
-            throw err;
-        }
-        machine.stats.status = "ONLINE";
-        payload.rotation_no++;
-        writePayload();
-    });
-}
+// var watchproxy = function () {
+//     writemachine();
+//     proxy.watch((err, value) => {
+//         if (err) {
+//             throw err;
+//         }
+//         machine.stats.status = "ONLINE";
+//         payload.rotation_no++;
+//         writePayload();
+//     });
+// }
 
 module.exports = {
-    machine, payload, watchproxy, startmodbus
+    payload, startmodbus
 }
+
