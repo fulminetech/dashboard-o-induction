@@ -17,23 +17,23 @@ const slaveID = 1;
 const baudRate = 115200;
 
 // Modbus Addresses
-const precompression_address = 6396;
-const maincompression_address = 6196;
-const ejection_address = 6296;
-const avg_address = 6496;
-
 const time_address = 4196;
-const status_address = 2588;
-const stats_address = 8096;
+
+const reg_address1 = 6396;
+const coil_address1 = 6396;
+
+const write_reg = 100
+const write_coil = 100
 
 // Data Structure 
 var machine = {
-    status: 'ON',
+    connection: false,
+    status: 'OFF',
     start: false,
     stop: false,
     ready: false,
-    delay: 10,
-    rotation: 10,
+    delay: 0,
+    rotation: 0,
     step: 0,
     production: 0,
     temperature: 0
@@ -45,16 +45,22 @@ var MBS_STATE_GOOD_CONNECT = "State good (port)";
 var MBS_STATE_FAIL_CONNECT = "State fail (port)";
 
 var MBS_STATE_GOOD_READ_TIME = "State good time (read)";
-var MBS_STATE_GOOD_READ_PRE = "State good pre (read)";
-
 var MBS_STATE_FAIL_READ_TIME = "State fail time (read)";
-var MBS_STATE_FAIL_READ_PRE = "State fail pre (read)";
 
-var MBS_STATE_GOOD_WRITE_STATS = "State good stats (write)";
-var MBS_STATE_GOOD_WRITE_STATUS = "State good status (write)";
+var MBS_STATE_GOOD_READ_REGS = "State good REGS (read)";
+var MBS_STATE_FAIL_READ_REGS = "State fail REGS (read)";
 
-var WRITE_STATUS
-var WRITE_STATS
+var MBS_STATE_GOOD_READ_COIL = "State good COIL (read)";
+var MBS_STATE_FAIL_READ_COIL = "State fail COIL (read)";
+
+var MBS_STATE_GOOD_WRITE_REGS = "State good REGS (write)";
+var MBS_STATE_FAIL_WRITE_REGS = "State fail REGS (write)";
+
+var MBS_STATE_GOOD_WRITE_COIL = "State good COIL (write)";
+var MBS_STATE_FAIL_WRITE_COIL = "State fail COIL (write)";
+
+var MBS_WRITE_REG = "Write Register" 
+var MBS_WRITE_COIL = "Write Coil" 
 
 var mbsState = MBS_STATE_INIT;
 
@@ -67,9 +73,6 @@ let failcounter = 100;
 let timecheck = 3;
 let timetemp = 0;
 
-// Write Registers
-var tablets_per_hour = 0;
-
 //  Make physical connection MODBUS-RTU
 var connectClient = function () {
 
@@ -79,7 +82,7 @@ var connectClient = function () {
     client.connectRTUBuffered("/dev/ttyUSB0", { baudRate: baudRate, parity: 'none' })
         .then(function () {
             mbsState = MBS_STATE_GOOD_CONNECT;
-
+            machine.connection = true;
             console.log(`[ CONNECTED ]`)
             console.log(`[ MODBUS TIMEOUT: ${timeOut} ]`);
             console.log(`[ BAUDRATE: ${baudRate} ]`);
@@ -93,8 +96,6 @@ var connectClient = function () {
             console.log(e);
         });
 }
-
-connectClient()
 
 // Sync Time from PLC
 var syncplctime = function () {
@@ -126,29 +127,41 @@ var runModbus = function () {
         case MBS_STATE_INIT:
             nextAction = connectClient;
             break;
+            
+        case MBS_STATE_FAIL_CONNECT:
+            nextAction = connectClient;
+            break;
 
         case MBS_STATE_GOOD_CONNECT:
             nextAction = syncplctime;
             break;
-
-        case MBS_STATE_FAIL_CONNECT:
-            nextAction = connectClient;
+        
+        case MBS_STATE_GOOD_READ_TIME || MBS_STATE_FAIL_READ_TIME:
+            nextAction = readRegs;
             break;
         
-        case MBS_STATE_GOOD_READ_STATUS:
-            nextAction = readstats;
+        case MBS_STATE_GOOD_READ_REGS || MBS_STATE_FAIL_READ_REGS:
+            nextAction = readCoils;
             break;
 
-        case MBS_STATE_GOOD_READ_STATS:
-            nextAction = readpreLHS;
+        case MBS_STATE_GOOD_READ_COIL || MBS_STATE_FAIL_READ_COIL:
+            nextAction = readRegs;
             break;
 
-        case MBS_STATE_GOOD_WRITE_STATS || MBS_STATE_FAIL_WRITE_STATS:
-            nextAction = readpreLHS;
+        case MBS_WRITE_COIL:
+            nextAction = writeCoil;
             break;
-
-        case MBS_STATE_GOOD_WRITE_STATUS || MBS_STATE_FAIL_WRITE_STATUS:
-            nextAction = readpreLHS;
+        
+        case MBS_WRITE_REG:
+            nextAction = writeReg;
+            break;
+        
+        case MBS_STATE_GOOD_WRITE_REGS || MBS_STATE_FAIL_WRITE_REGS:
+            nextAction = readRegs;
+            break;
+        
+        case MBS_STATE_GOOD_WRITE_COIL || MBS_STATE_FAIL_WRITE_COIL:
+            nextAction = readCoils;
             break;
 
         default:
@@ -159,8 +172,6 @@ var runModbus = function () {
     //console.log();
     // console.log(nextAction);
 
-    machine.stats.status = "ONLINE";
-
     if (readfailed > failcounter) {
         readfailed = 0;
         restartprodmodbus();
@@ -170,64 +181,114 @@ var runModbus = function () {
     if (nextAction !== undefined) {
         nextAction();
     } else {
-        readpre();
+        readRegs();
     }
 
     // set for next run
     setTimeout(runModbus, mbsScan);
 }
 
-var readpre = function () {
-    client.readHoldingRegisters(precompression_address, 8)
-        .then(function (precompression) {
-            payload.punch1.precompression = precompression.data[0] / 100;
-            payload.punch2.precompression = precompression.data[1] / 100;
-            payload.punch3.precompression = precompression.data[2] / 100;
-            payload.punch4.precompression = precompression.data[3] / 100;
-            payload.punch5.precompression = precompression.data[4] / 100;
-            payload.punch6.precompression = precompression.data[5] / 100;
-            payload.punch7.precompression = precompression.data[6] / 100;
-            payload.punch8.precompression = precompression.data[7] / 100;
+var readRegs = function () {
+    client.readHoldingRegisters(reg_address1, 8)
+        .then(function (data) {
+            machine.rotation = data.data[0];
+            machine.step = data.data[1];
+            machine.delay = data.data[2];
 
-            mbsState = MBS_STATE_GOOD_READ_PRE;
+            mbsState = MBS_STATE_GOOD_READ_REGS;
             // console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
         })
         .catch(function (e) {
-            console.error('[ #1 Precompression Garbage ]')
-            mbsState = MBS_STATE_FAIL_READ_PRE;
+            console.error('[ #1 Regs Failed ]')
+            mbsState = MBS_STATE_FAIL_READ_REGS;
             readfailed++;
             //console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
         })
 }
 
-var offset_stats;
-var set_stats;
+var readCoils = function () {
+    client.readCoils(coil_address1, 45)
+        .then(function (data) {
+            machine.start = data.data[0];
+            machine.stop = data.data[0];
+            machine.ready = data.data[0];
 
-var writestats = function () {
-
-    client.writeRegisters(stats_address + offset_stats, [set_stats])
-        .then(function (d) {
-            console.log(`New value ${set_stats}`);
-            mbsState = MBS_STATE_GOOD_WRITE_STATS;
+            mbsState = MBS_STATE_GOOD_READ_COIL;
         })
         .catch(function (e) {
-            mbsState = MBS_STATE_FAIL_WRITE_STATS;
+            console.error('[ #1 Coil Garbage ]')
+            mbsState = MBS_STATE_FAIL_READ_COIL;
+            readfailed++;
+        })
+}
+
+var offset;
+var set;
+
+var writeReg = function () {
+
+    client.writeRegisters(write_reg + offset, [set])
+        .then(function (d) {
+            console.log(`New value ${set}`);
+            mbsState = MBS_STATE_GOOD_WRITE_REGS;
+        })
+        .catch(function (e) {
+            mbsState = MBS_STATE_FAIL_WRITE_REGS;
             console.log(e.message);
         })
 }
 
-var writebutton = function () {
+var writeCoil = function () {
 
-    client.writeCoil(button_address + offset_status, set_status)
+    client.writeCoil(write_coil + offset, set)
         .then(function (d) {
-            console.log(`Address ${status_address} set to ${set_status}`, d);
-            mbsState = MBS_STATE_GOOD_WRITE_STATUS;
+            console.log(`Address ${status_address} set to ${set}`, d);
+            mbsState = MBS_STATE_GOOD_WRITE_COIL;
         })
         .catch(function (e) {
             console.log(e.message);
-            mbsState = MBS_STATE_FAIL_WRITE_STATUS;
+            mbsState = MBS_STATE_FAIL_WRITE_COIL;
         })
 }
+
+app.get("/set/:parameter/:value", (req, res) => {
+    const a = req.params.parameter;
+    const b = req.params.value;
+    
+    if (a == "start") {
+        offset = 30
+        set = b
+        machine.start = b;
+        machine.status = "ON";
+        mbsState = MBS_WRITE_COIL;
+    } else if (a == "stop") {
+        offset = 31
+        set = b
+        machine.stop = b;
+        machine.status = "STOPPED";
+        mbsState = MBS_WRITE_COIL;
+    } else if (a == "ready") {
+        offset = 32
+        set = b
+        machine.ready = b;
+        machine.status = "READY";
+        mbsState = MBS_WRITE_COIL;
+    } else if (a == "delay") {
+        offset = 34
+        set = b,
+        machine.delay = b;
+        mbsState = MBS_WRITE_REG;
+    }
+    
+    res.header('Access-Control-Allow-Origin', '*');
+    return res.json({ message: `[ UPDATED ${a} to ${b} ]` });
+});
+
+app.use("/api/machine", (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.json(machine);
+});
 
 function restartprodmodbus() {
     exec(restart1Command, (err, stdout, stderr) => {
@@ -236,109 +297,6 @@ function restartprodmodbus() {
         console.log(`${stdout}`);
     });
 }
-
-app.get("/set/status/:punch/:value", (req, res) => {
-    const a = parseInt(req.params.punch);
-    const b = req.params.value;
-
-    offset_status = a - 1;
-    if (b == 'true') {
-        set_status = Boolean(true)
-    } else if (b == 'false') {
-        set_status = Boolean(false)
-    }
-
-    writestatus()
-
-    res.header('Access-Control-Allow-Origin', '*');
-    return res.json({ message: `[ UPDATED ${a} to ${b} ]` });
-});
-
-app.get("/set/:parameter/:value", (req, res) => {
-    const a = req.params.parameter;
-    const b = req.params.value;
-    var c;
-
-    if (a == "rpm") {
-        offset_stats = 30
-        set_stats = b
-        c = payload.stats.rpm
-        payload.stats.rpm = b;
-        writestats()
-    } else if (a == "feederLHS") {
-        offset_stats = 31
-        set_stats = b
-        c = payload.stats.turretLHS
-        payload.stats.turretLHS = b;
-        writestats()
-    } else if (a == "feederRHS") {
-        offset_stats = 32
-        set_stats = b
-        c = payload.stats.turretRHS
-        payload.stats.turretRHS = b;
-        writestats()
-    }
-    else if (a == "pressure") {
-        offset_stats = 34
-        set_stats = b,
-            c = payload.stats.pressure_set
-        payload.stats.pressure_set = b;
-        writestats()
-    }
-    else if (a == "lubetime") {
-        offset_stats = 33
-        set_stats = b
-        c = payload.stats.lubetime_set
-        payload.stats.lubetime_set = b;
-        writestats()
-    }
-    else if (a == "machine" && b == "start") {
-        offset_status = 15
-        set_status = true
-        writebutton()
-        // payload.stats.lubetime_set = b;
-    }
-    else if (a == "machine" && b == "stop") {
-        offset_status = 16
-        set_status = false
-        writebutton()
-        // payload.stats.lubetime_set = b;
-    }
-    else if (a == "machine" && b == "inch") {
-        offset_status = 10
-        set_status = true // Toggle
-        writebutton()
-        // payload.stats.lubetime_set = b;
-    }
-    else if (a == "powerpack" && b == "start") {
-        offset_status = 0
-        set_status = true
-        writebutton()
-        // payload.stats.lubetime_set = b;
-    }
-    else if (a == "powerpack" && b == "stop") {
-        offset_status = 1
-        set_status = false
-        writebutton()
-        // payload.stats.lubetime_set = b;
-    }
-    else if (a == "powerpack" && b == "drain") {
-        offset_status = 3
-        set_status = true // Toggle
-        writebutton()
-        // payload.stats.lubetime_set = b;
-    }
-
-    res.header('Access-Control-Allow-Origin', '*');
-    return res.json({ message: `[ UPDATED ${a} to ${b} ]` });
-});
-
-
-app.use("/api/payload", (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.json(payload);
-});
 
 // Start Server
 const port = 3128;

@@ -55,6 +55,8 @@ app.get("/login/image", (req, res) => {
 });
 
 // Routes
+app.use('/env', express.static(__dirname + '/html/'));
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/html/index.html"));
 });

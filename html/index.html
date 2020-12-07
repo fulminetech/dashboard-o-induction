@@ -23,6 +23,7 @@
     <script type="text/javascript" src="http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/Mikhus/canvas-gauges/master/gauge.min.js"></script>
     <link  href="/css/tailwind.min.css" rel="stylesheet">
+    <script src="/env/env.js"></script>
 
     <!-- BackGround Info -->
     <style>
@@ -262,17 +263,17 @@
                                             <h4 class="py-3">
                                                 <button id="searchbatch"
                                                     class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10  border border-blue-500 hover:border-transparent rounded"
-                                                    onclick="setReady()">
+                                                    onclick="Ready()">
                                                     READY
                                                 </button>
                                                 <button id="searchbatch"
                                                     class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
-                                                    onclick="setStart()">
+                                                    onclick="Start()">
                                                     START
                                                 </button>
                                                 <button id="searchbatch"
                                                     class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
-                                                    onclick="setStop()">
+                                                    onclick="Stop()">
                                                     STOP
                                                 </button>
                                             </h4>
@@ -291,7 +292,7 @@
                                             </div>
                                             <div class="flex-1 p-2">
                                                 <h5 class="font-bold text-right text-4xl text-gray-900">Heating Time: 
-                                                    <a id="heating_time_metric" class="font-bold text-4xl pl-2 items-center text-gray-800"> 10 
+                                                    <a id="heating_time_metric" class="font-bold text-4xl pl-2 items-center text-gray-800">0 
                                                     </a> sec
                                                 </h5>
                                             </div>
@@ -884,39 +885,29 @@
     <!-- PAYLOAD API fetch -->
     <script>
         document.getElementById("machine_status_metric").innerHTML = "ON";
-            document.getElementById("heating_time_metric").innerHTML = "100";
-            document.getElementById("production_metric").innerHTML = "100";
+        document.getElementById("heating_time_metric").innerHTML = "0";
+        document.getElementById("production_metric").innerHTML = "100";
 
-            document.getElementById("j1-status").innerHTML = "Hello";
-            document.getElementById("j2-status").innerHTML = "Hello";
-            document.getElementById("j3-status").innerHTML = "Hello";
-            document.getElementById("j4-status").innerHTML = "Hello";
-            document.getElementById("j5-status").innerHTML = "Hello";
-            document.getElementById("j6-status").innerHTML = "Hello";
-            document.getElementById("j7-status").innerHTML = "Hello";
-            document.getElementById("j8-status").innerHTML = "Hello";
+        document.getElementById("j1-status").innerHTML = "Hello";
+        document.getElementById("j2-status").innerHTML = "Hello";
+        document.getElementById("j3-status").innerHTML = "Hello";
+        document.getElementById("j4-status").innerHTML = "Hello";
+        document.getElementById("j5-status").innerHTML = "Hello";
+        document.getElementById("j6-status").innerHTML = "Hello";
+        document.getElementById("j7-status").innerHTML = "Hello";
+        document.getElementById("j8-status").innerHTML = "Hello";
 
         async function fetchpayloadapiHF() {
-            fetch(payloadURL)
+            fetch(machineURL)
                 .then((resp) => resp.json()) // Transform the data into json
                 .then(function (data) {
                     // Here you get the data to modify as you please
-                    payload = data
+                    var machine = data
+                    console.log(machine)
 
-                    console.log(payload.status)
                     document.getElementById("machine_status_metric").innerHTML = "ON";
                     document.getElementById("heating_time_metric").innerHTML = "100";
                     document.getElementById("production_count").innerHTML = 100;
-                    
-                    document.getElementById("j1-status").innerHTML = "Hello";
-                    document.getElementById("j2-status").innerHTML = "Hello";
-                    document.getElementById("j3-status").innerHTML = "Hello";
-                    document.getElementById("j4-status").innerHTML = "Hello";
-                    document.getElementById("j5-status").innerHTML = "Hello";
-                    document.getElementById("j6-status").innerHTML = "Hello";
-                    document.getElementById("j7-status").innerHTML = "Hello";
-                    document.getElementById("j8-status").innerHTML = "Hello";
-                    
                 })
                 .catch(function (error) {
                     // If there is any error you will catch them here
@@ -956,17 +947,30 @@
 
     <!-- Controls -->
     <script>
-        function setReady(params) {
-            document.getElementById("heating_time_metric")
-
+        async function Start() {
+            var delay = document.getElementById("heating_time_metric");
+            let submiturl = `${seturl}/delay/${delay}`
+            await fetch(submiturl)
+                .then(console.log(`[ Delay set to ${delay}]`))
+                .then(submiturl = `${seturl}/stop/true`)
+                .then(await fetch(submiturl)
+                    .then(console.log("[ Machine Started ] "))
+                )       
+                .catch(console.error);
         }
-
-        function setStart(params) {
-            
+        
+        async function Stop() {
+            let submiturl = `${seturl}/stop/true`
+            await fetch(submiturl)
+                .then(console.log("[ Machine Stopped ] "))
+                .catch(console.error);
         }
-
-        function setStop(params) {
-            
+        
+        async function Ready() {
+            let submiturl = `${seturl}/ready/true`
+            await fetch(submiturl)
+                .then(console.log("[ Machine Ready ] "))
+                .catch(console.error);
         }
 
     </script>
