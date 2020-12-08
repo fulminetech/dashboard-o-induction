@@ -23,7 +23,7 @@
     "express": "^4.17.1",
     "hammerjs": "^2.0.8",
     "influxdb-nodejs": "^3.1.0",
-    "modbus-serial": "^8.0.0",
+    "modbus-serial": "^8.0.1",
     "moment": "^2.27.0",
     "nodemon": "^2.0.4",
     "onoff": "^6.0.0",
