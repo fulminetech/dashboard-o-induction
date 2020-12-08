@@ -35,54 +35,12 @@ const options = {
 
 app.use(bodyParser.urlencoded(options));
 
-// Favicons 
-app.get("/apple-touch-icon.png", (req, res) => {
-    res.sendFile(path.join(__dirname + "/favicon_io/apple-touch-icon.png"));
-});
-app.get("/favicon-32x32.png", (req, res) => {
-    res.sendFile(path.join(__dirname + "/favicon_io/favicon-32x32.png"));
-});
-app.get("/favicon-16x16.png", (req, res) => {
-    res.sendFile(path.join(__dirname + "/favicon_io/favicon-16x16.png"));
-});
-app.get("/site.webmanifest", (req, res) => {
-    res.sendFile(path.join(__dirname + "/favicon_io/site.webmanifest"));
-});
-app.get("/login/logo", (req, res) => {
-    res.sendFile(path.join(__dirname + "/background.png"));
-});
-app.get("/login/image", (req, res) => {
-    res.sendFile(path.join(__dirname + "/login.jpeg"));
-});
-
 // Routes
 app.use('/env', express.static(__dirname + '/html/'));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/html/index.html"));
 });
-
-app.get("/onboard", (req, res) => {
-    res.sendFile(path.join(__dirname + "/html/onboard.html"));
-});
-
-app.get("/dashboard", (req, res) => {
-    res.sendFile(path.join(__dirname + "/html/index.html"));
-});
-
-app.get("/control", (req, res) => {
-    res.sendFile(path.join(__dirname + "/html/control.html"));
-});
-
-app.get("/reports", (req, res) => {
-    res.sendFile(path.join(__dirname + "/html/reports.html"));
-});
-
-app.use("/api/payload", (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.json(payload);
-});
-
 
 app.get("/restart/:what", (req, res) => {
 
