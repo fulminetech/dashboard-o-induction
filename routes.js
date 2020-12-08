@@ -71,5 +71,5 @@ app.get("/restart/:what", (req, res) => {
 })
 
 // Start Server
-const port = process.env.PORT || 80;
+const port = 80;
 app.listen(port, () => console.log(`Server running on port ${port} 🔥`));
