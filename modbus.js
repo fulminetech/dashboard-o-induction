@@ -17,13 +17,16 @@ const slaveID = 1;
 const baudRate = 115200;
 
 // Modbus Addresses
-const time_address = 4196;
+// const time_address = 4196;
 
-const reg_address1 = 6396;
-const coil_address1 = 6396;
+const read_reg = 4596; // Index Number
+const read_reg1 = 5126; // Pulses
+const read_reg2 = 4496; // Heating Time
 
-const write_reg = 100
-const write_coil = 100
+const read_coil = 2198; // Start, Stop, Home
+
+const write_reg = 4496; // Heating Time 
+const write_coil = 2198 // Start, Stop, Home
 
 // Data Structure 
 var machine = {
@@ -31,10 +34,10 @@ var machine = {
     status: 'OFF',
     start: false,
     stop: false,
-    ready: false,
-    delay: 0,
-    rotation: 0,
-    step: 0,
+    home: false,
+    heating_time: 0,
+    index: 0,
+    pulse: 0,
     production: 0,
     temperature: 0
 }
@@ -47,8 +50,12 @@ var MBS_STATE_FAIL_CONNECT = "State fail (port)";
 var MBS_STATE_GOOD_READ_TIME = "State good time (read)";
 var MBS_STATE_FAIL_READ_TIME = "State fail time (read)";
 
-var MBS_STATE_GOOD_READ_REGS = "State good REGS (read)";
-var MBS_STATE_FAIL_READ_REGS = "State fail REGS (read)";
+var MBS_STATE_GOOD_READ_REGS1 = "State good REGS 1 (read)";
+var MBS_STATE_GOOD_READ_REGS2 = "State good REGS 2 (read)";
+var MBS_STATE_GOOD_READ_REGS3 = "State good REGS 3 (read)";
+var MBS_STATE_FAIL_READ_REGS1 = "State fail REGS 1 (read)";
+var MBS_STATE_FAIL_READ_REGS2 = "State fail REGS 2 (read)";
+var MBS_STATE_FAIL_READ_REGS3 = "State fail REGS 3 (read)";
 
 var MBS_STATE_GOOD_READ_COIL = "State good COIL (read)";
 var MBS_STATE_FAIL_READ_COIL = "State fail COIL (read)";
@@ -65,7 +72,7 @@ var MBS_WRITE_COIL = "Write Coil"
 var mbsState = MBS_STATE_INIT;
 
 var mbsTimeout = 5000;
-var mbsScan = 200;
+var mbsScan = 1000;
 
 let readfailed = 0;
 let failcounter = 100;
@@ -92,10 +99,13 @@ var connectClient = function () {
         })
         .catch(function (e) {
             mbsState = MBS_STATE_FAIL_CONNECT;
+            machine.connection = false;
             console.log(`[ FAILED TO CONNECT ]`)
             console.log(e);
         });
 }
+
+connectClient()
 
 // Sync Time from PLC
 var syncplctime = function () {
@@ -133,19 +143,27 @@ var runModbus = function () {
             break;
 
         case MBS_STATE_GOOD_CONNECT:
-            nextAction = syncplctime;
+            nextAction = readRegs1;
             break;
         
-        case MBS_STATE_GOOD_READ_TIME || MBS_STATE_FAIL_READ_TIME:
-            nextAction = readRegs;
+        // case MBS_STATE_GOOD_READ_TIME || MBS_STATE_FAIL_READ_TIME:
+        //     nextAction = readRegs1;
+        //     break;
+        
+        case MBS_STATE_GOOD_READ_REGS1 || MBS_STATE_FAIL_READ_REGS1:
+            nextAction = readRegs2;
             break;
         
-        case MBS_STATE_GOOD_READ_REGS || MBS_STATE_FAIL_READ_REGS:
+        case MBS_STATE_GOOD_READ_REGS2 || MBS_STATE_FAIL_READ_REGS2:
+            nextAction = readRegs3;
+            break;
+        
+        case MBS_STATE_GOOD_READ_REGS3 || MBS_STATE_FAIL_READ_REGS3:
             nextAction = readCoils;
             break;
 
         case MBS_STATE_GOOD_READ_COIL || MBS_STATE_FAIL_READ_COIL:
-            nextAction = readRegs;
+            nextAction = readRegs1;
             break;
 
         case MBS_WRITE_COIL:
@@ -157,7 +175,7 @@ var runModbus = function () {
             break;
         
         case MBS_STATE_GOOD_WRITE_REGS || MBS_STATE_FAIL_WRITE_REGS:
-            nextAction = readRegs;
+            nextAction = readRegs1;
             break;
         
         case MBS_STATE_GOOD_WRITE_COIL || MBS_STATE_FAIL_WRITE_COIL:
@@ -174,41 +192,76 @@ var runModbus = function () {
 
     if (readfailed > failcounter) {
         readfailed = 0;
-        restartprodmodbus();
+        // restartprodmodbus();
     }
 
     // execute "next action" function if defined
     if (nextAction !== undefined) {
         nextAction();
     } else {
-        readRegs();
+        readRegs1();
     }
 
     // set for next run
     setTimeout(runModbus, mbsScan);
 }
 
-var readRegs = function () {
-    client.readHoldingRegisters(reg_address1, 8)
+var readRegs1 = function () {
+    client.readHoldingRegisters(read_reg, 1)
         .then(function (data) {
-            machine.rotation = data.data[0];
-            machine.step = data.data[1];
-            machine.delay = data.data[2];
+            console.log(`Index No: ${data.data[0]}`)
+            machine.index = data.data[0]
 
-            mbsState = MBS_STATE_GOOD_READ_REGS;
+            mbsState = MBS_STATE_GOOD_READ_REGS1;
             // console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
         })
         .catch(function (e) {
             console.error('[ #1 Regs Failed ]')
-            mbsState = MBS_STATE_FAIL_READ_REGS;
+            mbsState = MBS_STATE_FAIL_READ_REGS1;
+            readfailed++;
+            //console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
+        })
+}
+
+var readRegs2 = function () {
+    
+    client.readHoldingRegisters(read_reg1, 1)
+        .then(function (data) {
+            console.log(`Pulse No: ${data.data[0]}`)
+            machine.pulse = data.data[0];
+            
+            mbsState = MBS_STATE_GOOD_READ_REGS2;
+            // console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
+        })
+        .catch(function (e) {
+            console.error('[ #2 Regs Failed ]')
+            mbsState = MBS_STATE_FAIL_READ_REGS2;
+            readfailed++;
+            //console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
+        })
+    
+}
+var readRegs3 = function () {
+    client.readHoldingRegisters(read_reg2, 1)
+        .then(function (data) {
+            console.log(`Heating Time: ${data.data[0]}`)
+            machine.heating_time = data.data[0];
+            
+            mbsState = MBS_STATE_GOOD_READ_REGS3;
+            // console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
+        })
+        .catch(function (e) {
+            console.error('[ #3 Regs Failed ]')
+            mbsState = MBS_STATE_FAIL_READ_REGS3;
             readfailed++;
             //console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
         })
 }
 
 var readCoils = function () {
-    client.readCoils(coil_address1, 45)
+    client.readCoils(read_coil, 3)
         .then(function (data) {
+            console.log(data)
             machine.start = data.data[0];
             machine.stop = data.data[0];
             machine.ready = data.data[0];
@@ -229,26 +282,39 @@ var writeReg = function () {
 
     client.writeRegisters(write_reg + offset, [set])
         .then(function (d) {
-            console.log(`New value ${set}`);
+            console.log(`Address ${write_coil + offset} set to ${set}`);
             mbsState = MBS_STATE_GOOD_WRITE_REGS;
         })
         .catch(function (e) {
             mbsState = MBS_STATE_FAIL_WRITE_REGS;
             console.log(e.message);
         })
+
 }
 
 var writeCoil = function () {
 
     client.writeCoil(write_coil + offset, set)
         .then(function (d) {
-            console.log(`Address ${status_address} set to ${set}`, d);
+            console.log(`Address ${write_coil + offset} set to ${set}`);
             mbsState = MBS_STATE_GOOD_WRITE_COIL;
         })
         .catch(function (e) {
             console.log(e.message);
             mbsState = MBS_STATE_FAIL_WRITE_COIL;
         })
+    
+    setTimeout(() => {
+        client.writeCoil(write_coil + offset, !set)
+            .then(function (d) {
+                console.log(`Address ${write_coil + offset} reset to ${!set}`);
+                mbsState = MBS_STATE_GOOD_WRITE_COIL;
+            })
+            .catch(function (e) {
+                console.log(e.message);
+                mbsState = MBS_STATE_FAIL_WRITE_COIL;
+            })
+    }, 50);
 }
 
 app.get("/set/:parameter/:value", (req, res) => {
@@ -256,27 +322,23 @@ app.get("/set/:parameter/:value", (req, res) => {
     const b = req.params.value;
     
     if (a == "start") {
-        offset = 30
-        set = b
-        machine.start = b;
-        machine.status = "ON";
+        offset = 0
+        set = Boolean(b)
+        machine.status = "START";
         mbsState = MBS_WRITE_COIL;
     } else if (a == "stop") {
-        offset = 31
-        set = b
-        machine.stop = b;
+        offset = 1
+        set = Boolean(b)
         machine.status = "STOPPED";
         mbsState = MBS_WRITE_COIL;
-    } else if (a == "ready") {
-        offset = 32
-        set = b
-        machine.ready = b;
+    } else if (a == "home") {
+        offset = 2
+        set = Boolean(b)
         machine.status = "READY";
         mbsState = MBS_WRITE_COIL;
     } else if (a == "delay") {
-        offset = 34
-        set = b,
-        machine.delay = b;
+        offset = 0
+        set = parseInt(b * 10)
         mbsState = MBS_WRITE_REG;
     }
     

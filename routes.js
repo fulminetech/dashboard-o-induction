@@ -25,6 +25,7 @@ app.use('/charts/plugin', express.static(__dirname + '/node_modules/chartjs-plug
 app.use('/plugin', express.static(__dirname + '/node_modules/hammerjs/'));
 app.use('/css', express.static(__dirname + '/node_modules/tailwindcss/dist/'));
 app.use('/font', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/'));
+app.use('/guage', express.static(__dirname + '/guage/'));
 
 const options = {
     inflate: true,
@@ -112,5 +113,5 @@ app.get("/restart/:what", (req, res) => {
 })
 
 // Start Server
-const port = process.env.PORT || 6001;
+const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Server running on port ${port} 🔥`));

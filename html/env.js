@@ -1,9 +1,9 @@
 // Environment Variable
-var hostname = "http://192.168.0.2:5000"
+var hostname = "http://192.168.1.102"
 
 // APIs
 
-var machineURL = `${hostname}/api/machine`;
+var machineURL = `${hostname}:5000/api/machine`;
 
 
-var seturl = `http://192.168.0.2:3128/set`
+var seturl = `${hostname}:3128/set`
