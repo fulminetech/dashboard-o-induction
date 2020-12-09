@@ -15,10 +15,6 @@ const rebootCommand = "sudo reboot -h now"
 
 const host = "localhost"
 
-const {
-    payload, watchproxy, startmodbus
-} = require('./data.js')
-
 // Serve NPM modules
 app.use('/charts', express.static(__dirname + '/node_modules/chart.js/dist/'));
 app.use('/charts/plugin', express.static(__dirname + '/node_modules/chartjs-plugin-zoom/'));
