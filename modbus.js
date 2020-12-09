@@ -324,7 +324,7 @@ app.get("/set/:parameter/:value", (req, res) => {
     if (a == "start") {
         offset = 0
         set = Boolean(b)
-        machine.status = "START";
+        machine.status = "ON";
         mbsState = MBS_WRITE_COIL;
     } else if (a == "stop") {
         offset = 1
@@ -334,7 +334,7 @@ app.get("/set/:parameter/:value", (req, res) => {
     } else if (a == "home") {
         offset = 2
         set = Boolean(b)
-        machine.status = "READY";
+        machine.status = "HOME";
         mbsState = MBS_WRITE_COIL;
     } else if (a == "delay") {
         offset = 0

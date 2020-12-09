@@ -657,23 +657,51 @@
         var value = 270
         var heating_time = 5000;
 
+        var indexx;
+
         setTimeout(() => { 
-            value = value - (45* index);
-            gauge.value = value;
-
+            fetch(machineURL)
+                .then((resp) => resp.json()) // Transform the data into json
+                .then(function (data) {
+                    // Here you get the data to modify as you please
+                    var machine = data
+                    value = value - (45 * machine.index + 2)
+                    gauge.value = value
+                    console.log("SET at index: ", machine.index + 1)
+                })
+                .catch(function (error) {
+                    // If there is any error you will catch them here
+                    console.log("[ PAYLOAD FETCH ERROR ]")
+                });
+            
             setInterval(function () {
-                if(index>7){
-                    index=0
-                }
+                fetch(machineURL)
+                    .then((resp) => resp.json()) // Transform the data into json
+                    .then(function (data) {
+                        // Here you get the data to modify as you please
+                        var machine = data
+                        indexx =  machine.index +1;
+                        console.log("Actual index", indexx)
 
-                index++;
+                    })
+                    .catch(function (error) {
+                        // If there is any error you will catch them here
+                        console.log("[ PAYLOAD FETCH ERROR ]")
+                    });
+                    
+                // if(index>7){
+                //     index=0
+                // }
+
+                // index++;
+               
+                index = indexx
                 
                 value = value - 45;
                 gauge.value = value;
 
                 document.getElementById("production_metric").innerText++
 
-                console.log(index)
                 if (index == 2) {
                     document.getElementById("j1-status").innerHTML = "Loaded";
                     document.getElementById("j2-status").innerHTML = "Load";
@@ -847,7 +875,7 @@
                 }
                 
             }, heating_time);
-        }, 1000);
+        }, 100);
         
     </script>
 
@@ -1032,12 +1060,15 @@
                 .then(function (data) {
                     // Here you get the data to modify as you please
                     var machine = data
-                    console.log(machine)
+                    
+                    if (machine.connection == true){
+                        document.getElementById("modbus").innerHTML = "CONNECTED";
+                    }
 
-                    document.getElementById("machine_status_metric").innerHTML = "ON";
-                    document.getElementById("heating_time_metric").innerHTML = "100";
+                    document.getElementById("machine_status_metric").innerHTML = machine.status;
 
                     if (machine.status == "ON"){
+                        document.getElementById("heating_time_metric").innerHTML = machine.heating_time/10;
 
                     }
                 })
@@ -1049,10 +1080,8 @@
 
         function startfetching() {
             setInterval(() => {
-                document.getElementById("machine_status_metric").innerHTML = "ON";
-                document.getElementById("modbus").innerHTML = "CONNECTED";
-                // fetchpayload();
-            }, 500);
+                fetchpayload();
+            }, 1000);
         }
     </script>
 
@@ -1094,8 +1123,12 @@
             let submiturl = `${seturl}/delay/${delay}`
             await fetch(submiturl)
                 .then(console.log(`[ Delay set to ${delay}]`))
-                .then( setTimeout(() => { Start() }, 1000))
+                // .then( Start())
                 .catch(console.error);
+            
+            setTimeout(() => {
+                Start()
+            }, 1000);
         }
         
         async function Stop() {
