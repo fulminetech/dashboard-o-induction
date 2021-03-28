@@ -82,10 +82,14 @@
                 <!-- HTML Pages -->
                 <ul class="list-reset uppercase text-md lg:flex flex-1 items-center px-4 md:px-0">
                     <!-- Dashboard -->
-                    <li class="mr-6 my-2 md:my-0">
+                    <li class="mr-6 my-2 flex flex-row md:my-0">
                         <a href="/dashboard" class="block py-1 md:py-3 pl-1 align-middle text-gray-800 no-underline hover:text-gray-100 border-b-2 border-gray-400  hover:border-blue-400">
                             <i class="fas fa-digital-tachograph fa-fw mr-3"></i>
-                            <span class="pb-3 md:pb-0"> Dashboard </span>
+                            <span class="pb-3 md:pb-0"> Vertical </span>
+                        </a>
+                        <a href="/dashboard" class="block pl-5 py-1 md:py-3 pl-1 align-middle text-gray-600 no-underline hover:text-gray-100 border-b-2 border-gray-400  hover:border-blue-400">
+                            <i class="fas fa-digital-tachograph fa-fw mr-3"></i>
+                            <span class="pb-3 md:pb-0"> Horizontal </span>
                         </a>
                     </li>
                 </ul>
@@ -238,8 +242,9 @@
                             style="height:90vh;">
                             <div class="flex flex-wrap w-full text-center">
 
-                                <!-- Machine Toggle Card-->
-                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+
+                                <!-- Machine Control-->
+                                <div class="w-full md:w-1/3 xl:w-1/3 p-3">
                                     <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex flex-wrap flex-row items-center">
                                             <div class="flex-shrink p-2">
@@ -247,21 +252,137 @@
                                                 </div>
                                             </div>
                                             <div class="flex-1 pr-2">
-                                                <h5 class="font-bold text-right text-4xl text-gray-900">Induction Machine [8 Index]
-                                                </h5>
+                                                <h5 class="font-bold uppercase text-right text-4xl text-gray-900">Machine Control</h5>
                                             </div>
                                         </div>
                                         <div class="flex-1 text-right py-3 pr-3">
-                                            <h5 class="font-bold uppercase text-2xl pb-5 text-gray-900"> Status:
-                                                <a id="machine_status_metric" class="font-bold text-2xl pl-2 items-center text-gray-800">OFF
-                                                </a>
-                                            </h5>
                                             <h4 class="py-3">
                                                 <button id="searchbatch"
-                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10  border border-blue-500 hover:border-transparent rounded"
-                                                    onclick="Home()">
-                                                    Home
+                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="Delay()">
+                                                    START
                                                 </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    STOP
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    Timer
+                                                </button>
+                                            </h4>
+                                        </div>
+                                        <div class=" text-right pr-3 ">
+                                            
+                                            <div class="flex flex-row">
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer On (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer Off (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+ 
+                                </div>
+                                
+                                <!-- Return Pump-->
+                                <div class="w-full md:w-1/3 xl:w-1/3 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="flex flex-wrap flex-row items-center">
+                                            <div class="flex-shrink p-2">
+                                                <div class="rounded p-3 bg-blue-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse" onclick="location.reload()"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 pr-2">
+                                                <h5 class="font-bold uppercase text-right text-4xl text-gray-900">Return Pump</h5>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 text-right py-3 pr-3">
+                                            <h4 class="py-3">
+                                                <button id="searchbatch"
+                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="Delay()">
+                                                    START
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    STOP
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    Timer
+                                                </button>
+                                            </h4>
+                                        </div>
+                                        <div class=" text-right pr-3 ">
+                                            
+                                            <div class="flex flex-row">
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer On (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer Off (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+ 
+                                </div>
+
+                                <!-- Quenching Pump-->
+                                <div class="w-full md:w-1/2 xl:w-1/3 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="flex flex-wrap flex-row items-center">
+                                            <div class="flex-shrink p-2">
+                                                <div class="rounded p-3 bg-blue-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse" onclick="location.reload()"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 pr-2">
+                                                <h5 class="font-bold uppercase text-right text-4xl text-gray-900">Quenching Pump</h5>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 text-right py-3 pr-3">
+                                            <h4 class="py-3">
                                                 <button id="searchbatch"
                                                     class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
                                                     onclick="Delay()">
@@ -277,59 +398,225 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Delay Time Card-->
-                                <div class="w-full md:w-1/2 xl:w-1/2 p-3">
+
+                                <!-- VFD1: Chuck-->
+                                <div class="w-full md:w-1/2 xl:w-1/3 p-3">
                                     <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="flex items-center">
                                             <div class="p-2">
-                                                <div class="rounded p-3 bg-blue-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse"></i>
+                                                <div class="rounded p-3 bg-purple-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse"></i>
                                                 </div>
                                             </div>
                                             <div class="flex-1 p-2">
-                                                <h5 class="font-bold text-right text-4xl text-gray-900">Heating Time: 
-                                                    <a id="heating_time_metric" class="font-bold text-4xl pl-2 items-center text-gray-800">0 
-                                                    </a> sec
-                                                </h5>
+                                                <h5 class="font-bold text-right text-4xl text-gray-900">VFD1: Chuck Motor</h5>
                                             </div>
                                         </div>
-                                
-                                        <div class=" text-right pb-2 pr-3">
-                                            <h4 class="py-2">
-                                                <button 
-                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-red-500 hover:border-transparent rounded"
-                                                    onclick="decrement()">
-                                                    -
-                                                </button>
-                                                <button 
-                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-green-500 hover:border-transparent rounded"
-                                                    onclick="increment()">
-                                                    +
-                                                </button>
-                                            </h4>
+
+                                        <div class="flex-1 text-right py-3 pr-3">
                                             <h4 class="py-3">
-                                                <button 
-                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10  border border-blue-500 hover:border-transparent rounded"
-                                                    onclick="setDelay1()">
-                                                    5 sec
+                                                <button id="searchbatch"
+                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="Delay()">
+                                                    START
                                                 </button>
-                                                <button 
-                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-blue-500 hover:border-transparent rounded"
-                                                    onclick="setDelay2()">
-                                                    10 sec
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    STOP
                                                 </button>
-                                                <button
-                                                    class="bg-blue-100 uppercase text-xl hover:bg-blue-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-blue-500 hover:border-transparent rounded"
-                                                    onclick="setDelay3()">
-                                                    20 sec
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    Timer
                                                 </button>
                                             </h4>
+                                
+                                        </div>
+                                
+                                        <div class=" text-right pr-3 ">
+                                            <div class="flex flex-row">
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 text-2xl uppercase font-bold">
+                                                        Frequency (Hz)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Set Direction
+                                                    </h4>
+                                                    <h4 class="py-2">
+                                                        <button 
+                                                        class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-2 px-20 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                        onclick="decrement()">
+                                                        FORWARD
+                                                        </button>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex flex-row">
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer On (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer Off (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <h4 class="py-2 uppercase text-center font-bold text-2xl">
+                                                Inching
+                                            </h4>
+                                            <div class="flex flex-row pb-2">
+                                                <div class="w-1/2">
+                                                    
+                                                    <button class="bg-green-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                onclick="decrement()">
+                                                FORWARD
+                                                </button>
+                                                    
+                                                </div>
+                                                <div class="w-1/2">
+                                                    
+                                                    <button class="bg-red-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="increment()">
+                                                    REVERSE
+                                                </button>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- VFD2: Y axis-->
+                                <div class="w-full md:w-1/2 xl:w-1/3 p-3">
+                                    <div class="bg-white border border-gray-500 rounded shadow p-2">
+                                        <div class="flex items-center">
+                                            <div class="p-2">
+                                                <div class="rounded p-3 bg-orange-600"><i class="fas fa-cog fa-3x fa-fw fa-inverse"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 p-2">
+                                                <h5 class="font-bold text-right text-4xl text-gray-900">VFD2: Y axis</h5>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-1 text-right py-3 pr-3">
+                                            <h4 class="py-3">
+                                                <button id="searchbatch"
+                                                    class="bg-green-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="Delay()">
+                                                    START
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    STOP
+                                                </button>
+                                                <button id="searchbatch"
+                                                    class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-4 px-10 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                    onclick="Stop()">
+                                                    Timer
+                                                </button>
+                                            </h4>
+                                
+                                        </div>
+                                
+                                        <div class=" text-right pr-3 ">
+                                            <div class="flex flex-row">
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 text-2xl uppercase font-bold">
+                                                        Frequency (Hz)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Set Direction
+                                                    </h4>
+                                                    <h4 class="py-2">
+                                                        <button 
+                                                        class="bg-red-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-2 px-20 ml-5 border border-red-500 hover:border-transparent rounded"
+                                                        onclick="decrement()">
+                                                        FORWARD
+                                                        </button>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex flex-row">
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer On (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <h4 class="pt-2 uppercase font-bold text-2xl">
+                                                        Timer Off (secs)
+                                                    </h4>
+                                                    <div class="py-3">
+                                                        <input id="roller_freq"
+                                                            class="bg-white border-gray-500 shadow focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-2 "
+                                                            type="number" placeholder="Input" onkeydown="if (event.keyCode == 13) roller_freq()">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <h4 class="py-2 uppercase text-center font-bold text-2xl">
+                                                Inching
+                                            </h4>
+                                            <div class="flex flex-row pb-2">
+                                                <div class="w-1/2">
+                                                    
+                                                    <button class="bg-green-500 uppercase text-xl hover:bg-red-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                onclick="decrement()">
+                                                FORWARD
+                                                </button>
+                                                    
+                                                </div>
+                                                <div class="w-1/2">
+                                                    
+                                                    <button class="bg-red-500 uppercase text-xl hover:bg-green-500 text-gray-800 font-semibold hover:text-white py-3 px-20 ml-5 border border-green-500 hover:border-transparent rounded"
+                                                    onclick="increment()">
+                                                    REVERSE
+                                                </button>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <!-- Status Table-->
-                                <div class="w-2/3 flex-shrink flex-wrap flex-row p-3">
+                                <!-- <div class="w-2/3 flex-shrink flex-wrap flex-row p-3">
                                     <div class="bg-white border border-gray-500 rounded shadow p-2" height="300rem">
                                         <div class="border-b border-gray-800 p-2">
                                             <h5 class="font-bold uppercase text-center text-xl text-gray-900">Production: 
@@ -411,10 +698,10 @@
                                             </table>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 
                                 <!-- Turret Guage-->
-                                <div class="w-1/3 flex-shrink flex-wrap flex-row p-3">
+                                <!-- <div class="w-1/3 flex-shrink flex-wrap flex-row p-3">
                                     <div class="bg-white border border-gray-500 rounded shadow p-2">
                                         <div class="border-b border-gray-800 p-3">
                                             <h5 class="font-bold uppercase text-center text-gray-900">Turret Position</h5>
@@ -423,7 +710,7 @@
                                             <canvas height="330rem" width="500rem" id="canvas-id"></canvas>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                             </div>
                         </div>
