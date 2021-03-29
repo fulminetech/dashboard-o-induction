@@ -16,6 +16,32 @@ const timeOut = 500;
 const slaveID = 1;
 const baudRate = 115200;
 
+const Gpio = require('onoff').Gpio;
+
+const machine_start = new Gpio(17, 'out')
+const machine_stop = new Gpio(17, 'out')
+
+machine_start.writeSync(value); // Value 0/1
+
+const retpump_start = new Gpio(17, 'out')
+const retpump_stop = new Gpio(17, 'out')
+
+const qpump_start = new Gpio(17, 'out')
+const qpump_stop = new Gpio(17, 'out')
+
+// console.log("Testing proxy")
+
+// var data_number = 0
+
+// proxy.watch((err, value) => {
+//     if (err) {
+//         throw err;
+//     }
+//     data_number++;
+//     console.log(`Data: ${data_number}`)
+    
+// });
+
 // Modbus Addresses
 // const time_address = 4196;
 
@@ -25,8 +51,17 @@ const read_reg2 = 4496; // Heating Time
 
 const read_coil = 2198; // Start, Stop, Home
 
-const write_reg = 4496; // Heating Time 
-const write_coil = 2198 // Start, Stop, Home
+const vfd1_mode_address = 8192 // 2000H
+const vfd1_freq_address = 8193 // 2001H
+
+// HEX to decimal: https://www.rapidtables.com/convert/number/hex-to-decimal.html?x=2001
+const vfd1_forward_stop = 17 // 0000000000100001 
+const vfd1_forward_run = 18 // 0000000000010010 
+const vfd1_forward_jog = 19 // 0000000000010011
+
+const vfd1_reverse_stop = 33 // 0000000000100001
+const vfd1_reverse_run = 34 // 0000000000100010
+const vfd1_reverse_jog = 35 // 0000000000100011
 
 // Data Structure 
 var machine = {
@@ -106,29 +141,6 @@ var connectClient = function () {
 }
 
 connectClient()
-
-// Sync Time from PLC
-var syncplctime = function () {
-    client.readHoldingRegisters(time_address, 6)
-        .then(function (plcTime) {
-            exec(`sudo timedatectl set-time '20${plcTime.data[2]}-${plcTime.data[1]}-${plcTime.data[0]} ${plcTime.data[3]}:${plcTime.data[4]}:${plcTime.data[5]}'`, (err, stdout, stderr) => {
-                console.log(`[ Time updated! ]`)
-            })
-        })
-        .then(function () {
-            mbsState = MBS_STATE_GOOD_READ_TIME;
-        })
-        .catch(function (e) {
-            timetemp++
-            if (timetemp < timecheck) {
-                mbsState = MBS_STATE_GOOD_CONNECT;
-                console.log(mbsState)
-            } else {
-                console.log(mbsState)
-                mbsState = MBS_STATE_FAIL_READ_TIME;
-            }
-        })
-}
 
 // Run MODBUS
 var runModbus = function () {
@@ -275,14 +287,14 @@ var readCoils = function () {
         })
 }
 
-var offset;
+var address;
 var set;
 
 var writeReg = function () {
 
-    client.writeRegisters(write_reg + offset, [set])
+    client.writeRegisters(address, [set])
         .then(function (d) {
-            console.log(`Address ${write_coil + offset} set to ${set}`);
+            console.log(`Address ${address} set to ${set}`);
             mbsState = MBS_STATE_GOOD_WRITE_REGS;
         })
         .catch(function (e) {
@@ -294,9 +306,9 @@ var writeReg = function () {
 
 var writeCoil = function () {
 
-    client.writeCoil(write_coil + offset, set)
+    client.writeCoil(address, set)
         .then(function (d) {
-            console.log(`Address ${write_coil + offset} set to ${set}`);
+            console.log(`Address ${address} set to ${set}`);
             mbsState = MBS_STATE_GOOD_WRITE_COIL;
         })
         .catch(function (e) {
@@ -305,9 +317,9 @@ var writeCoil = function () {
         })
     
     setTimeout(() => {
-        client.writeCoil(write_coil + offset, !set)
+        client.writeCoil(address, !set)
             .then(function (d) {
-                console.log(`Address ${write_coil + offset} reset to ${!set}`);
+                console.log(`Address ${address} reset to ${!set}`);
                 mbsState = MBS_STATE_GOOD_WRITE_COIL;
             })
             .catch(function (e) {
@@ -321,24 +333,33 @@ app.get("/set/:parameter/:value", (req, res) => {
     const a = req.params.parameter;
     const b = req.params.value;
     
-    if (a == "start") {
-        offset = 0
-        set = Boolean(b)
-        machine.status = "ON";
-        mbsState = MBS_WRITE_COIL;
-    } else if (a == "stop") {
-        offset = 1
-        set = Boolean(b)
-        machine.status = "STOPPED";
-        mbsState = MBS_WRITE_COIL;
-    } else if (a == "home") {
-        offset = 2
-        set = Boolean(b)
-        machine.status = "HOME";
-        mbsState = MBS_WRITE_COIL;
-    } else if (a == "delay") {
-        offset = 0
-        set = parseInt(b * 10)
+    if (a == "vfd1_freq") {
+        address = vfd1_freq_address
+        set = parseInt(b * 100)
+        mbsState = MBS_WRITE_REG;
+    } else if (a == "vfd1_forward_run") {
+        address = vfd1_mode_address
+        set = vfd1_forward_run
+        mbsState = MBS_WRITE_REG;
+    } else if (a == "vfd1_forward_stop") {
+        address = vfd1_mode_address
+        set = vfd1_forward_stop
+        mbsState = MBS_WRITE_REG;
+    } else if (a == "vfd1_forward_jog") {
+        address = vfd1_mode_address
+        set = vfd1_forward_jog
+        mbsState = MBS_WRITE_REG;
+    } else if (a == "vfd1_reverse_stop") {
+        address = vfd1_mode_address
+        set = vfd1_reverse_stop
+        mbsState = MBS_WRITE_REG;
+    } else if (a == "vfd1_reverse_run") {
+        address = vfd1_mode_address
+        set = vfd1_reverse_run
+        mbsState = MBS_WRITE_REG;
+    } else if (a == "vfd1_reverse_jog") {
+        address = vfd1_mode_address
+        set = vfd1_reverse_jog
         mbsState = MBS_WRITE_REG;
     }
     
