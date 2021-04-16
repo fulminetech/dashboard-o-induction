@@ -14,13 +14,29 @@ var startTime = + new Date();
 var client = new ModbusRTU();
 const mbsTimeout = 5000;
 const slaveID = 1;
-const baudRate = 115200;
+const baudRate = 9600;
 
 // Modbus Addresses
 const time_address = 4196;
 
+const vfd1_status_monitor = 8448 // 2100H
+
+const vfd1_mode_address = 8192 // 2000H
+const vfd1_freq_address = 8193 // 2001H
+
+// HEX to decimal: https://www.rapidtables.com/convert/number/hex-to-decimal.html?x=2001
+const vfd1_forward_stop = 17 // 0000000000100001 
+const vfd1_forward_run = 18 // 0000000000010010 
+const vfd1_forward_jog = 19 // 0000000000010011
+
+const vfd1_reverse_stop = 33 // 0000000000100001
+const vfd1_reverse_run = 34 // 0000000000100010
+const vfd1_reverse_jog = 35 // 0000000000100011
+
 const reg_address1 = 6396;
 const coil_address1 = 6396;
+
+
 
 const write_reg = 100
 const write_coil = 100
@@ -31,7 +47,7 @@ var connectClient = function () {
     client.setID(slaveID);
     client.setTimeout(mbsTimeout);
 
-    client.connectRTUBuffered("/dev/ttyUSB0", { baudRate: baudRate, parity: 'none' })
+    client.connectRTUBuffered("/dev/tty.usbserial-A50285BI", { baudRate: baudRate, parity: 'even' })
         .then(function () {
             // mbsState = MBS_STATE_GOOD_CONNECT;
             // machine.connection = true;
@@ -40,7 +56,9 @@ var connectClient = function () {
             console.log(`[ BAUDRATE: ${baudRate} ]`);
         })
         .then(function () {
-            runModbus()
+            writeReg()
+            // readRegs()
+            // runModbus()
         })
         .catch(function (e) {
             // mbsState = MBS_STATE_FAIL_CONNECT;
@@ -52,13 +70,20 @@ var connectClient = function () {
 connectClient()
 
 setInterval(() => {
-
+    readRegs()
 }, 2000);
 
 var readRegs = function () {
-    client.readHoldingRegisters(reg_address1, 8)
+    client.readHoldingRegisters(vfd1_status_monitor, 11)
         .then(function (data) {
-            console.log(data)
+            console.log('Status:',data.data[1])
+            console.log('Frequency Command:',data.data[2])
+            console.log('Output Frequency:',data.data[3])
+            console.log('Output Current:',data.data[4])
+            console.log('DC Bus Voltage:',data.data[5])
+            console.log('Operation Time:',data.data[9])
+            console.log('Counter Value:',data.data[9])
+
             // machine.rotation = data.data[0];
             // machine.step = data.data[1];
             // machine.delay = data.data[2];
@@ -92,11 +117,62 @@ var readCoils = function () {
 }
 
 var offset;
-var set;
+
 
 var writeReg = function () {
 
-    client.writeRegisters(write_reg + offset, [set])
+    client.writeRegister(vfd1_mode_address, vfd1_forward_jog)
+        .then(function (d) {
+            console.log(`New value ${set}`);
+            // mbsState = MBS_STATE_GOOD_WRITE_REGS;
+        })
+        .catch(function (e) {
+            // mbsState = MBS_STATE_FAIL_WRITE_REGS;
+            console.log(e.message);
+        })
+    
+    setTimeout(() => {
+        client.writeRegister(vfd1_mode_address, vfd1_forward_stop)
+            .then(function (d) {
+                console.log(`New value ${set}`);
+                // mbsState = MBS_STATE_GOOD_WRITE_REGS;
+            })
+            .catch(function (e) {
+                // mbsState = MBS_STATE_FAIL_WRITE_REGS;
+                console.log(e.message);
+            })
+    }, 9500);
+    
+    // setTimeout(() => {
+    //     client.writeRegister(vfd1_mode_address, vfd1_reverse_run)
+    //         .then(function (d) {
+    //             console.log(`New value ${set}`);
+    //             // mbsState = MBS_STATE_GOOD_WRITE_REGS;
+    //         })
+    //         .catch(function (e) {
+    //             // mbsState = MBS_STATE_FAIL_WRITE_REGS;
+    //             console.log(e.message);
+    //         })
+    // }, 14500);
+    
+    // setTimeout(() => {
+    //     client.writeRegister(vfd1_mode_address, vfd1_reverse_stop)
+    //         .then(function (d) {
+    //             console.log(`New value ${set}`);
+    //             // mbsState = MBS_STATE_GOOD_WRITE_REGS;
+    //         })
+    //         .catch(function (e) {
+    //             // mbsState = MBS_STATE_FAIL_WRITE_REGS;
+    //             console.log(e.message);
+    //         })
+    // }, 20500);
+}
+
+var freq;
+
+var writeFreq = function () {
+
+    client.writeRegister(vfd1_freq_address, freq)
         .then(function (d) {
             console.log(`New value ${set}`);
             // mbsState = MBS_STATE_GOOD_WRITE_REGS;

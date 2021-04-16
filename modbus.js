@@ -16,18 +16,19 @@ const timeOut = 500;
 const slaveID = 1;
 const baudRate = 115200;
 
-const Gpio = require('onoff').Gpio;
+// GPIO
+// const Gpio = require('onoff').Gpio;
 
-const machine_start = new Gpio(17, 'out')
-const machine_stop = new Gpio(17, 'out')
+// const machine_start = new Gpio(17, 'out')
+// const machine_stop = new Gpio(17, 'out')
 
-machine_start.writeSync(value); // Value 0/1
+// machine_start.writeSync(value); // Value 0/1
 
-const retpump_start = new Gpio(17, 'out')
-const retpump_stop = new Gpio(17, 'out')
+// const retpump_start = new Gpio(17, 'out')
+// const retpump_stop = new Gpio(17, 'out')
 
-const qpump_start = new Gpio(17, 'out')
-const qpump_stop = new Gpio(17, 'out')
+// const qpump_start = new Gpio(17, 'out')
+// const qpump_stop = new Gpio(17, 'out')
 
 // console.log("Testing proxy")
 
@@ -43,13 +44,6 @@ const qpump_stop = new Gpio(17, 'out')
 // });
 
 // Modbus Addresses
-// const time_address = 4196;
-
-const read_reg = 4596; // Index Number
-const read_reg1 = 5126; // Pulses
-const read_reg2 = 4496; // Heating Time
-
-const read_coil = 2198; // Start, Stop, Home
 
 const vfd1_mode_address = 8192 // 2000H
 const vfd1_freq_address = 8193 // 2001H
@@ -130,7 +124,8 @@ var connectClient = function () {
             console.log(`[ BAUDRATE: ${baudRate} ]`);
         })
         .then(function () {
-            runModbus()
+            // runModbus()
+            readRegs1()
         })
         .catch(function (e) {
             mbsState = MBS_STATE_FAIL_CONNECT;
@@ -219,10 +214,10 @@ var runModbus = function () {
 }
 
 var readRegs1 = function () {
-    client.readHoldingRegisters(read_reg, 1)
+    client.readHoldingRegisters(vfd1_freq_address, 1)
         .then(function (data) {
-            console.log(`Index No: ${data.data[0]}`)
-            machine.index = data.data[0]
+            // console.log(`Index No: ${data.data[0]}`)
+            // machine.index = data.data[0]
 
             mbsState = MBS_STATE_GOOD_READ_REGS1;
             // console.log(`${(+ new Date() - startTime) / 1000} : ${mbsState}`)
