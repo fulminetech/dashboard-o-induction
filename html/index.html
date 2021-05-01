@@ -88,6 +88,17 @@
                             <span class="pb-3 md:pb-0"> Dashboard </span>
                         </a>
                     </li>
+
+                    <!-- Control Panel -->
+                    <!-- <li class="mr-6 my-2 md:my-0">
+                        <a href="/control"
+                            class="block py-1 md:py-3 pl-1 align-middle text-gray-600 no-underline border-gray-900 ">
+                            <i class="fas fa-chart-area fa-fw mr-3"></i>
+                            <span class="pb-1 md:pb-0">
+                                Control
+                            </span>
+                        </a>
+                    </li> -->
                 </ul>
 
                 <!-- Time  -->
@@ -141,83 +152,7 @@
                     </div>
                 </div> -->
 
-                <!-- Ellapsed time Metric Card-->
-                <!-- <div class="w-full p-3">
-                    <div class="bg-white border border-gray-500 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-900">Ellapsed time:<br>
-                                    <a id="ellapsed_time" class="font-bold text-2xl text-gray-500">
-                                    </a>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!--Production Count Metric Card-->
-                <!-- <div class="w-full p-3">
-                    <div class="bg-white border border-gray-500 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-900">Production count:</h5>
-                                <h3 id="production_count" class="font-bold text-2xl text-gray-500">
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!--Delay Time Metric Card-->
-                <!-- <div class="w-full p-3">
-                    <div class="bg-white border border-gray-500 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-900">Delay Time:</h5>
-                                <h3 id="delay_time" class="font-bold text-2xl text-gray-500">0
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!--Rejection Count Metric Card-->
-                <!-- <div class="w-full p-3">
-                    <div class="bg-white border border-gray-500 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-900">Rejection count:</h5>
-                                <h3 id="count_metric" class="font-bold text-2xl text-gray-500">0
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!--Production Per Hour Count Metric Card-->
-                <!-- <div class="w-full p-3">
-                    <div class="bg-white border border-gray-500 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-900">Production Per Hour:</h5>
-                                <h3 id="production_per_hour" class="font-bold text-2xl text-gray-500">
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- RPM Metric Card-->
-                <!-- <div class="w-full p-3">
-                    <div class="bg-white border border-gray-500 rounded shadow p-2">
-                        <div class="flex flex-row items-center">
-                            <div class="flex-1 pt-3 text-center pr-3">
-                                <h5 class="font-bold text-xl uppercase text-gray-900">Turret RPM: <a id="rpm_metric"> 100</a></h5>
-                            </div>
-                        </div>
-                        <div id="chart_div" class="w-full p-5 pl-10 "></div>
-                    </div>
-                </div> -->
+                
 
                 <!--Divider-->
                 <!-- <hr class="border-b-2 border-gray-600 my-4 mx-4">
@@ -352,58 +287,58 @@
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-1
                                                         </td>
-                                                        <td id="j1-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j1-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j1-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j1-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j1-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j1-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-2
                                                         </td>
-                                                        <td id="j2-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j2-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j2-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j2-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j2-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j2-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-3
                                                         </td>
-                                                        <td id="j3-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j3-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j3-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j3-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j3-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j3-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-4
                                                         </td>
-                                                        <td id="j4-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j4-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j4-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j4-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j4-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j4-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-5
                                                         </td>
-                                                        <td id="j5-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j5-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j5-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j5-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j5-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j5-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-6
                                                         </td>
-                                                        <td id="j6-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j6-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j6-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j6-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j6-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j6-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-7
                                                         </td>
-                                                        <td id="j7-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j7-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j7-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j7-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j7-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j7-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="border border-gray-500 text-2xl px-4 py-1">J-8
                                                         </td>
-                                                        <td id="j8-status" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j8-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
-                                                        <td id="j8-check" class="border text-2xl uppercase border-gray-500 px-4 py-1"></td>
+                                                        <td id="j8-status" class="border text-2xl uppercase border-gray-500 px-4 py-1">OK</td>
+                                                        <td id="j8-temp" class="border text-2xl uppercase border-gray-500 px-4 py-1">850</td>
+                                                        <td id="j8-check" class="border text-2xl uppercase border-gray-500 px-4 py-1">PASS</td>
                                                     </tr>
                                                     
                                         
