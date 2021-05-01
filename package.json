@@ -5,7 +5,7 @@
   "main": "routes.js",
   "scripts": {
     "install": "npm install",
-    "start": "node routes.js && node modbus.js",
+    "start": "node routes.js",
     "live": "pm2 start routes.js --name prod-routes && pm2 start modbus.js --name prod-modbus",
     "build:css": "tailwind build src/style.css -o html/style.css"
   },
